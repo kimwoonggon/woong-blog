@@ -234,7 +234,6 @@
         - Column gap: 64px
         - Headline font: 44px/52px, weight 700, color #2F2941
         - Intro text: 16px/26px, color #4F4A63
-        - Primary button: height 48px, padding 0 20px, radius 4px, bg #F3434F, text #FFFFFF
         - Avatar: 240px circle, border 0
         Mobile layout:
         - Stacked (Flex Column Reverse): Image top, Text bottom.
@@ -427,8 +426,10 @@
         - Title: Editable page title input
         - Content: Notion-style Rich Text Editor (Tiptap)
           - Markdown shortcuts: # (H1), ## (H2), ### (H3), - (List), * (List), ``` (Code)
+          - Slash Command Menu (`/`): Searchable list for all block types (Headings, Lists, Images, 3D Model, HTML Widget, Code Block).
+          - Code Blocks: Integrated syntax highlighting via `lowlight` (highlight.js) for multiple languages.
           - Bubble Menu: Floating toolbar for Bold, Italic, Strike, Highlight, and Headings
-          - Fixed Toolbar: Standard formatting options (Undo, Redo, Headings, Lists, Images, Links)
+          - Fixed Toolbar: Standard formatting options (Undo, Redo, Headings, Lists, Images, Links, 3D, HTML)
           - Image handling: Drag-and-drop or upload via dialog (saves to Supabase Storage)
           - Content structure: { html: string } (JSON string containing the raw HTML)
         - Save Changes button: Saves content to pages.content as { html: string }
@@ -645,7 +646,7 @@
       <description>Anonymous user browses the full site and downloads resume</description>
       <steps>
         1. Open "/" as an anonymous user.
-        2. Verify Home hero renders with headline, intro text, avatar, and Resume button.
+        2. Verify Home hero renders with headline, intro text, and avatar.
         3. Click "Works" in nav and navigate to "/works".
         4. Verify Works list shows only published items.
         5. Open the first work detail and verify title/meta/body blocks render.
@@ -778,9 +779,22 @@
           { "id": "uuid", "type": "divider" }
         ]
       }
+     - **Block Types**:
+  - Text: Paragraph, Headings (H1, H2, H3)
+  - Layout: Bullet/Numbered lists, Blockquotes
+  - Media: Images (Drag & Drop / Copy-Paste / Upload)
+  - **Interactive Blocks**:
+    - **3D Model**: Embeds a Three.js scene (e.g., rotating cube) with adjustable height.
+    - **HTML Widget**: Allows direct insertion of custom HTML/CSS for advanced formatting or external embeds.
+- **Slash Command Menu (`/`)**:
+  - Typing `/` at the start of a line opens a searchable command palette.
+  - Supports all block types with keyboard navigation (Up/Down/Enter).
+- **Public View Hydration**:
+  - Custom HTML tags (e.g., `<three-js-block>`) are hydrated into interactive React components on the public-facing pages.
       Block enums:
-      - type: enum (h1, h2, p, quote, ul, ol, image, file, divider, code)
-      - marks: enum (bold, italic, underline, code) (optional per text block)
+      - type: enum (h1, h2, p, quote, ul, ol, image, file, divider, code, threeJsBlock, htmlBlock)
+      - marks: enum (bold, italic, underline, highlight, link)
+      - code: Supports syntax highlighting (Javascript, Typescript, HTML, CSS, etc.)
       Validation:
       - content.version required
       - every block.id must be unique

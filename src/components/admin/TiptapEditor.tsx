@@ -9,6 +9,12 @@ import Highlight from '@tiptap/extension-highlight'
 import { TextStyle } from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
 import Link from '@tiptap/extension-link'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import { all, createLowlight } from 'lowlight'
+import { ThreeJsBlock } from './tiptap/ThreeJsBlock'
+import { HtmlBlock } from './tiptap/HtmlBlock'
+import { SlashCommand } from './tiptap/SlashCommand'
+import { suggestion } from './tiptap/Commands'
 import {
     Bold,
     Italic,
@@ -24,7 +30,8 @@ import {
     Link as LinkIcon,
     Highlighter,
     Undo,
-    Redo
+    Redo,
+    Box
 } from 'lucide-react'
 import { useCallback, useEffect } from 'react'
 
@@ -34,12 +41,22 @@ interface TiptapEditorProps {
     placeholder?: string
 }
 
+// Initialize lowlight for syntax highlighting
+const lowlight = createLowlight(all)
+
 export function TiptapEditor({ content, onChange, placeholder = "Type '/' for commands, or just start writing..." }: TiptapEditorProps) {
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
                 heading: {
                     levels: [1, 2, 3] as any,
+                },
+                codeBlock: false, // Disable default code block
+            }),
+            CodeBlockLowlight.configure({
+                lowlight,
+                HTMLAttributes: {
+                    class: 'rounded-md bg-gray-900 text-gray-100 p-4 font-mono my-4',
                 },
             }),
             Image.configure({
@@ -62,6 +79,11 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
                 HTMLAttributes: {
                     class: 'text-blue-600 underline cursor-pointer hover:text-blue-800',
                 },
+            }),
+            ThreeJsBlock,
+            HtmlBlock,
+            SlashCommand.configure({
+                suggestion,
             }),
         ],
         content,
@@ -272,6 +294,22 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
                     title="Add Link"
                 >
                     <LinkIcon size={18} />
+                </ToolbarButton>
+
+                <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+
+                <ToolbarButton
+                    onClick={() => (editor.chain().focus() as any).insertContent({ type: 'threeJsBlock' }).run()}
+                    title="Insert 3D Model"
+                >
+                    <Box size={18} />
+                </ToolbarButton>
+
+                <ToolbarButton
+                    onClick={() => (editor.chain().focus() as any).insertContent({ type: 'htmlBlock' }).run()}
+                    title="Insert HTML Widget"
+                >
+                    <Code size={18} />
                 </ToolbarButton>
             </div>
 

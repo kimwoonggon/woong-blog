@@ -54,11 +54,6 @@ export default async function HomePage() {
           <p className="mb-8 max-w-[600px] text-lg text-gray-600 dark:text-gray-400">
             {introText}
           </p>
-          <Link href="/resume">
-            <Button size="lg" className="bg-[#F3434F] hover:bg-[#D32F3A] text-white">
-              Download Resume
-            </Button>
-          </Link>
         </div>
         <div className="flex-shrink-0">
           <div className="h-60 w-60 overflow-hidden rounded-full bg-gray-200 shadow-xl dark:bg-gray-800">
