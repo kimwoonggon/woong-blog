@@ -30,7 +30,8 @@ export async function PUT(request: Request) {
         instagram_url,
         twitter_url,
         linkedin_url,
-        github_url
+        github_url,
+        resume_asset_id
     } = body
 
     const { error } = await supabase
@@ -43,6 +44,7 @@ export async function PUT(request: Request) {
             twitter_url,
             linkedin_url,
             github_url,
+            resume_asset_id,
             updated_at: new Date().toISOString()
         })
         .eq('singleton', true)
@@ -60,7 +62,7 @@ export async function GET() {
 
     const { data, error } = await supabase
         .from('site_settings')
-        .select('owner_name, tagline, facebook_url, instagram_url, twitter_url, linkedin_url, github_url')
+        .select('owner_name, tagline, facebook_url, instagram_url, twitter_url, linkedin_url, github_url, resume_asset_id')
         .eq('singleton', true)
         .single()
 

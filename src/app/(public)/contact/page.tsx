@@ -22,7 +22,9 @@ export default async function ContactPage() {
             </header>
 
             <div className="prose prose-lg max-w-none dark:prose-invert">
-                {page?.content && typeof page.content === 'object' && 'blocks' in page.content ? (
+                {page?.content && typeof page.content === 'object' && 'html' in page.content ? (
+                    <div dangerouslySetInnerHTML={{ __html: page.content.html as string }} />
+                ) : page?.content && typeof page.content === 'object' && 'blocks' in page.content ? (
                     <BlockRenderer blocks={(page.content as { blocks: Block[] }).blocks} />
                 ) : (
                     <p>

@@ -201,6 +201,14 @@
         - Error state: centered message + retry button
       </main_content>
 
+### Resume Management
+- [x] Resume Management (Upload/Delete PDF) <!-- id: resume -->
+- **Upload**: PDF file upload via Admin Panel (`/admin/pages`).
+- **Storage**: Files stored in `public-resume` Supabase bucket.
+- **Reference**: Managed via `site_settings.resume_asset_id` referencing `assets` table.
+- **Display**: Rendered on `/resume` using an `<iframe>` viewer with a direct download option.
+- **Navigation**: Link in Navbar/Footer persists across the site.
+
       <footer>
         - No top border
         - Centered layout (flex column, items-center)
@@ -417,12 +425,13 @@
         
         Introduction/Contact Page Editors:
         - Title: Editable page title input
-        - Content: Block-based editor with drag-and-drop support
-          - Paragraph blocks
-          - Heading blocks (h1, h2, h3)
-          - Image blocks (with upload to Supabase Storage)
-          - Code blocks
-        - Save Changes button: Saves content to pages.content as { blocks: Block[] }
+        - Content: Notion-style Rich Text Editor (Tiptap)
+          - Markdown shortcuts: # (H1), ## (H2), ### (H3), - (List), * (List), ``` (Code)
+          - Bubble Menu: Floating toolbar for Bold, Italic, Strike, Highlight, and Headings
+          - Fixed Toolbar: Standard formatting options (Undo, Redo, Headings, Lists, Images, Links)
+          - Image handling: Drag-and-drop or upload via dialog (saves to Supabase Storage)
+          - Content structure: { html: string } (JSON string containing the raw HTML)
+        - Save Changes button: Saves content to pages.content as { html: string }
         
         API Endpoint: PUT /api/admin/pages
         - Requires admin authentication

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { HomePageEditor } from '@/components/admin/HomePageEditor'
 import { PageEditor } from '@/components/admin/PageEditor'
 import { SiteSettingsEditor } from '@/components/admin/SiteSettingsEditor'
+import { ResumeEditor } from '@/components/admin/ResumeEditor'
 import { Block } from '@/components/content/BlockRenderer'
 
 export const revalidate = 0
@@ -26,9 +27,20 @@ export default async function AdminPagesPage() {
     // Fetch site settings
     const { data: siteSettings } = await supabase
         .from('site_settings')
-        .select('owner_name, tagline, facebook_url, instagram_url, twitter_url, linkedin_url, github_url')
+        .select('owner_name, tagline, facebook_url, instagram_url, twitter_url, linkedin_url, github_url, resume_asset_id')
         .eq('singleton', true)
         .single()
+
+    // Fetch resume asset if it exists
+    let resumeAsset = null
+    if (siteSettings?.resume_asset_id) {
+        const { data: asset } = await supabase
+            .from('assets')
+            .select('*')
+            .eq('id', siteSettings.resume_asset_id)
+            .single()
+        resumeAsset = asset
+    }
 
     const { data: pages } = await supabase
         .from('pages')
@@ -92,6 +104,12 @@ export default async function AdminPagesPage() {
                         }}
                     />
                 )}
+
+                {/* Resume Management */}
+                <ResumeEditor
+                    initialResumeId={siteSettings?.resume_asset_id || null}
+                    resumeAsset={resumeAsset}
+                />
             </div>
         </div>
     )

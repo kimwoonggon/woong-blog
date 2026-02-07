@@ -25,6 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+import { Toaster } from "sonner"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +34,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(inter.className, "antialiased")}>{children}</body>
+      <body className={cn(inter.className, "antialiased")}>
+        {children}
+        <Toaster position="top-right" richColors />
+      </body>
     </html>
   )
 }

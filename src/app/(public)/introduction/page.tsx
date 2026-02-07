@@ -22,17 +22,14 @@ export default async function IntroductionPage() {
             </header>
 
             <div className="prose prose-lg max-w-none dark:prose-invert">
-                {page?.content && typeof page.content === 'object' && 'blocks' in page.content ? (
+                {page?.content && typeof page.content === 'object' && 'html' in page.content ? (
+                    <div dangerouslySetInnerHTML={{ __html: page.content.html as string }} />
+                ) : page?.content && typeof page.content === 'object' && 'blocks' in page.content ? (
                     <BlockRenderer blocks={(page.content as { blocks: Block[] }).blocks} />
                 ) : (
                     <div className="space-y-4">
                         <p>
-                            Hello! I&apos;m John Doe, a creative technologist passionate about building
-                            innovative digital experiences.
-                        </p>
-                        <p>
-                            With over 10 years of experience in web development, I specialize in
-                            creating modern, performant, and user-friendly applications.
+                            Hello! I&apos;m Woonggon Kim, IT Technician.
                         </p>
                     </div>
                 )}

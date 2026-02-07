@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from 'react'
@@ -6,16 +5,15 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { BlockEditor } from '@/components/admin/BlockEditor'
-import { Block } from '@/components/content/BlockRenderer'
+import { TiptapEditor } from '@/components/admin/TiptapEditor'
 import { updatePage } from '@/app/admin/pages/actions'
-// unused toast removed
+import { toast } from 'sonner'
 
 interface Page {
     id: string
     title: string
     slug: string
-    content: { blocks: Block[] }
+    content: any
 }
 
 interface PageEditorProps {
@@ -23,22 +21,43 @@ interface PageEditorProps {
 }
 
 export function PageEditor({ page }: PageEditorProps) {
-    const [blocks, setBlocks] = useState<Block[]>(page.content?.blocks || [])
+    // Determine initial HTML content. Handle old blocks format for migration.
+    const getInitialHtml = () => {
+        if (!page.content) return ''
+        if (typeof page.content === 'object' && 'html' in page.content) {
+            return page.content.html as string
+        }
+        // If it's the old format, we just start fresh or could try to convert, 
+        // but for this task we'll just handle the new 'html' field.
+        return ''
+    }
+
+    const [html, setHtml] = useState(getInitialHtml())
     const [isSaving, setIsSaving] = useState(false)
     const router = useRouter()
 
     async function onSubmit(formData: FormData) {
         setIsSaving(true)
-        formData.append('content', JSON.stringify({ blocks }))
+        const toastId = toast.loading('Saving changes...')
 
-        const result = await updatePage(page.id, formData)
+        try {
+            // Store as { html: "..." } to maintain JSONB structure
+            formData.append('content', JSON.stringify({ html }))
 
-        setIsSaving(false)
-        if (result?.error) {
-            alert('Error saving page') // Fallback if toast not setup
-        } else {
-            // toast.success('Page saved')
-            router.refresh()
+            const result = await updatePage(page.id, formData)
+
+            if (result?.error) {
+                console.error('Save error from result:', result.error)
+                toast.error(`Error saving page: ${result.error}`, { id: toastId })
+            } else {
+                toast.success('Page updated successfully!', { id: toastId })
+                router.refresh()
+            }
+        } catch (err) {
+            console.error('Fatal save error:', err)
+            toast.error('A fatal error occurred while saving.', { id: toastId })
+        } finally {
+            setIsSaving(false)
         }
     }
 
@@ -56,9 +75,12 @@ export function PageEditor({ page }: PageEditorProps) {
                 <Input id={`title-${page.id}`} name="title" required defaultValue={page.title} />
             </div>
 
-            <div className="space-y-4 rounded-md border p-6 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
-                <h3 className="text-lg font-medium">Content</h3>
-                <BlockEditor blocks={blocks} onChange={setBlocks} />
+            <div className="space-y-4">
+                <Label>Content (Notion-style Editor)</Label>
+                <TiptapEditor content={html} onChange={setHtml} />
+                <p className="text-sm text-gray-500">
+                    Supports Markdown shortcuts: # for H1, ## for H2, - for lists. Drag and drop images to upload.
+                </p>
             </div>
         </form>
     )
