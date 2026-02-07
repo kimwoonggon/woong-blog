@@ -26,8 +26,19 @@ export default async function BlogPage() {
                                     <CardTitle className="text-xl font-bold md:text-2xl">{blog.title}</CardTitle>
                                 </Link>
                                 <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-400 mt-2">
-                                    <span>{blog.published_at}</span>
-                                    <span className="border-l border-gray-400 pl-4">{blog.tags?.join(', ')}</span>
+                                    <span>
+                                        {blog.published_at
+                                            ? new Date(blog.published_at).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric'
+                                            })
+                                            : 'Unknown Date'
+                                        }
+                                    </span>
+                                    {blog.tags?.[0] && (
+                                        <span className="border-l border-gray-400 pl-4">{blog.tags.join(', ')}</span>
+                                    )}
                                 </div>
                             </CardHeader>
                             <CardContent>

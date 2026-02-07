@@ -6,10 +6,8 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
-import { BlockEditor } from '@/components/admin/BlockEditor'
-import { Block } from '@/components/content/BlockRenderer'
+import { TiptapEditor } from '@/components/admin/TiptapEditor'
 import { createBlog, updateBlog } from '@/app/admin/blog/actions'
 
 interface Blog {
@@ -18,7 +16,9 @@ interface Blog {
     excerpt?: string
     tags?: string[]
     published?: boolean
-    content?: { blocks: Block[] }
+    content?: { html: string }
+    published_at?: string
+    updated_at?: string
 }
 
 interface BlogEditorProps {
@@ -26,12 +26,24 @@ interface BlogEditorProps {
 }
 
 export function BlogEditor({ initialBlog }: BlogEditorProps) {
-    const [blocks, setBlocks] = useState<Block[]>(initialBlog?.content?.blocks || [])
+    const [html, setHtml] = useState<string>(initialBlog?.content?.html || '')
     const router = useRouter()
     const isEditing = !!initialBlog?.id
 
+    // Format dates for display
+    const formatDate = (dateString?: string) => {
+        if (!dateString) return 'Not yet'
+        return new Date(dateString).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })
+    }
+
     async function onSubmit(formData: FormData) {
-        formData.append('content', JSON.stringify({ blocks }))
+        formData.append('content', JSON.stringify({ html }))
 
         if (isEditing && initialBlog?.id) {
             await updateBlog(initialBlog.id, formData)
@@ -51,26 +63,41 @@ export function BlogEditor({ initialBlog }: BlogEditorProps) {
                     <Label htmlFor="tags">Tags (comma separated)</Label>
                     <Input id="tags" name="tags" defaultValue={initialBlog?.tags?.join(', ')} />
                 </div>
-            </div>
 
-            <div className="space-y-2">
-                <Label htmlFor="excerpt">Excerpt</Label>
-                <Textarea id="excerpt" name="excerpt" required defaultValue={initialBlog?.excerpt} />
-            </div>
-
-            <div className="flex items-center space-x-2">
-                <Checkbox id="published" name="published" defaultChecked={initialBlog?.published} />
-                <Label htmlFor="published">Published</Label>
+                <div className="flex gap-8 pt-4">
+                    <div className="space-y-1">
+                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Published</span>
+                        <p className="text-sm text-gray-700 dark:text-gray-300 font-mono">
+                            {formatDate(initialBlog?.published_at)}
+                        </p>
+                    </div>
+                    {initialBlog?.updated_at && (
+                        <div className="space-y-1">
+                            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Last Modified</span>
+                            <p className="text-sm text-gray-700 dark:text-gray-300 font-mono">
+                                {formatDate(initialBlog?.updated_at)}
+                            </p>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="space-y-4 rounded-md border p-6 dark:border-gray-800">
-                <h3 className="text-lg font-medium">Content</h3>
-                <BlockEditor blocks={blocks} onChange={setBlocks} />
+                <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-medium">Content</h3>
+                    <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-full border">
+                        <Checkbox id="published" name="published" defaultChecked={initialBlog?.published} />
+                        <Label htmlFor="published" className="text-sm cursor-pointer">Published</Label>
+                    </div>
+                </div>
+                <TiptapEditor content={html} onChange={setHtml} />
             </div>
 
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-end gap-4 border-t pt-8">
                 <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-                <Button type="submit">{isEditing ? 'Update Post' : 'Create Post'}</Button>
+                <Button type="submit" className="bg-[#142850] hover:bg-[#142850]/90 text-white font-medium px-8 transition-all hover:scale-[1.02]">
+                    {isEditing ? 'Update Post' : 'Create Post'}
+                </Button>
             </div>
         </form>
     )

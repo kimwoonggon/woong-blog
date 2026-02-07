@@ -38,7 +38,13 @@ export default async function HomePage() {
   // Fetch Featured Works (published)
   const { data: featuredWorks } = await supabase
     .from('works')
-    .select('*')
+    .select(`
+      *,
+      thumbnail:thumbnail_asset_id (
+        bucket,
+        path
+      )
+    `)
     .eq('published', true)
     .order('published_at', { ascending: false })
     .limit(3)
@@ -87,22 +93,34 @@ export default async function HomePage() {
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           {recentPosts && recentPosts.length > 0 ? (
-            recentPosts.map((post) => (
-              <Card key={post.id} className="border-none shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">{post.title}</CardTitle>
-                  <div className="flex gap-4 text-base text-gray-600 dark:text-gray-400">
-                    <span>{post.published_at}</span>
-                    <span className="border-l border-gray-400 pl-4">{post.tags?.[0]}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="line-clamp-3 text-gray-600 dark:text-gray-300">
-                    {post.excerpt}
-                  </p>
-                </CardContent>
-              </Card>
-            ))
+            recentPosts.map((post) => {
+              const publishDate = post.published_at
+                ? new Date(post.published_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+                : 'Unknown Date'
+
+              return (
+                <Card key={post.id} className="border-none shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-bold">{post.title}</CardTitle>
+                    <div className="flex gap-4 text-base text-gray-600 dark:text-gray-400">
+                      <span>{publishDate}</span>
+                      {post.tags?.[0] && (
+                        <span className="border-l border-gray-400 pl-4">{post.tags[0]}</span>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="line-clamp-3 text-gray-600 dark:text-gray-300">
+                      {post.excerpt}
+                    </p>
+                  </CardContent>
+                </Card>
+              )
+            })
           ) : (
             <div className="col-span-2 py-8 text-center text-gray-500">
               No recent posts found.
@@ -120,33 +138,63 @@ export default async function HomePage() {
         </div>
         <div className="flex flex-col gap-6">
           {featuredWorks && featuredWorks.length > 0 ? (
-            featuredWorks.map((work) => (
-              <div key={work.id} className="flex flex-col gap-6 border-b border-gray-200 pb-6 md:flex-row dark:border-gray-800">
-                <div className="h-48 w-full flex-shrink-0 overflow-hidden rounded-md bg-gray-200 md:w-64 dark:bg-gray-800">
-                  {work.thumbnail_asset_id && (
-                    <div className="flex h-full w-full items-center justify-center text-gray-400">
-                      {/* Thumbnail would go here */}
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-1 flex-col justify-start">
-                  <Link href={`/works/${work.slug}`} className="mb-4 text-2xl font-bold text-gray-900 hover:underline dark:text-gray-50">
-                    {work.title}
+            featuredWorks.map((work: any) => {
+              // Resolve thumbnail URL or fallback
+              let thumbnailUrl = null
+              if (work.thumbnail) {
+                thumbnailUrl = supabase.storage.from(work.thumbnail.bucket).getPublicUrl(work.thumbnail.path).data.publicUrl
+              } else if (work.content?.html) {
+                const match = work.content.html.match(/<img[^>]+src="([^">]+)"/)
+                if (match && match[1]) {
+                  thumbnailUrl = match[1]
+                }
+              }
+
+              const publishDate = work.published_at
+                ? new Date(work.published_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+                : 'Unknown Date'
+
+              return (
+                <div key={work.id} className="flex flex-col gap-6 border-b border-gray-200 pb-6 md:flex-row dark:border-gray-800">
+                  <Link
+                    href={`/works/${work.slug}`}
+                    className="h-48 w-full flex-shrink-0 overflow-hidden rounded-md bg-gray-200 md:w-64 dark:bg-gray-800 relative block group border"
+                  >
+                    {thumbnailUrl ? (
+                      <img
+                        src={thumbnailUrl}
+                        alt={work.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-gray-400 font-medium">
+                        No Image
+                      </div>
+                    )}
                   </Link>
-                  <div className="mb-4 flex items-center gap-4">
-                    <span className="rounded-full bg-[#142850] px-3 py-1 text-sm font-bold text-white">
-                      {work.year}
-                    </span>
-                    <span className="text-gray-500 dark:text-gray-400">
-                      {work.category}
-                    </span>
+                  <div className="flex flex-1 flex-col justify-start">
+                    <Link href={`/works/${work.slug}`} className="mb-4 text-2xl font-bold text-gray-900 hover:text-[#F3434F] dark:text-gray-50 transition-colors">
+                      {work.title}
+                    </Link>
+                    <div className="mb-4 flex items-center gap-4">
+                      <span className="rounded-full bg-[#142850] px-3 py-1 text-sm font-bold text-white">
+                        {publishDate}
+                      </span>
+                      <span className="text-gray-500 dark:text-gray-400 font-medium">
+                        {work.category}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 line-clamp-2">
+                      {work.excerpt}
+                    </p>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {work.excerpt}
-                  </p>
                 </div>
-              </div>
-            ))
+              )
+            })
           ) : (
             <div className="py-8 text-center text-gray-500">
               No featured works found.

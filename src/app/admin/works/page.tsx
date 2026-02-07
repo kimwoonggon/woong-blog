@@ -31,7 +31,7 @@ export default async function AdminWorksPage() {
                         <TableRow>
                             <TableHead>Title</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Year</TableHead>
+                            <TableHead>Published Date</TableHead>
                             <TableHead>Category</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
@@ -52,7 +52,12 @@ export default async function AdminWorksPage() {
                                             </Badge>
                                         )}
                                     </TableCell>
-                                    <TableCell>{work.year}</TableCell>
+                                    <TableCell className="text-sm text-gray-500">
+                                        {work.published_at
+                                            ? new Date(work.published_at).toLocaleDateString()
+                                            : '—'
+                                        }
+                                    </TableCell>
                                     <TableCell>{work.category}</TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">

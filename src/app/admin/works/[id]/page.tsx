@@ -15,7 +15,13 @@ export default async function EditWorkPage({ params }: PageProps) {
 
     const { data: work } = await supabase
         .from('works')
-        .select('*')
+        .select(`
+            *,
+            thumbnail:thumbnail_asset_id (
+                bucket,
+                path
+            )
+        `)
         .eq('id', id)
         .single()
 
@@ -23,10 +29,22 @@ export default async function EditWorkPage({ params }: PageProps) {
         notFound()
     }
 
+    // Resolve thumbnail URL
+    let thumbnailUrl = null
+    if (work.thumbnail) {
+        const { data: { publicUrl } } = supabase.storage.from(work.thumbnail.bucket).getPublicUrl(work.thumbnail.path)
+        thumbnailUrl = publicUrl
+    }
+
+    const initialWork = {
+        ...work,
+        thumbnail_url: thumbnailUrl
+    }
+
     return (
         <div className="space-y-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">Edit Work</h1>
-            <WorkEditor initialWork={work} />
+            <WorkEditor initialWork={initialWork} />
         </div>
     )
 }

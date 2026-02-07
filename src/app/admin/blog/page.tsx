@@ -52,7 +52,12 @@ export default async function AdminBlogPage() {
                                             </Badge>
                                         )}
                                     </TableCell>
-                                    <TableCell>{blog.published_at || '-'}</TableCell>
+                                    <TableCell className="text-sm text-gray-500">
+                                        {blog.published_at
+                                            ? new Date(blog.published_at).toLocaleDateString()
+                                            : '—'
+                                        }
+                                    </TableCell>
                                     <TableCell>{blog.tags?.join(', ')}</TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">

@@ -9,10 +9,12 @@ export async function createBlog(formData: FormData) {
     const supabase = await createClient()
 
     const title = formData.get('title') as string
-    const excerpt = formData.get('excerpt') as string
     const tags = (formData.get('tags') as string).split(',').map(tag => tag.trim()).filter(Boolean)
     const published = formData.get('published') === 'on'
     const content = formData.get('content') ? JSON.parse(formData.get('content') as string) : {}
+
+    // Auto-generate excerpt from content
+    const excerpt = generateExcerpt(content.html)
 
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
 
@@ -42,10 +44,24 @@ export async function updateBlog(id: string, formData: FormData) {
     const supabase = await createClient()
 
     const title = formData.get('title') as string
-    const excerpt = formData.get('excerpt') as string
     const tags = (formData.get('tags') as string).split(',').map(tag => tag.trim()).filter(Boolean)
     const published = formData.get('published') === 'on'
     const content = formData.get('content') ? JSON.parse(formData.get('content') as string) : {}
+
+    // Auto-generate excerpt from content
+    const excerpt = generateExcerpt(content.html)
+
+    // Find existing blog to check for metadata
+    const { data: existingBlog } = await supabase
+        .from('blogs')
+        .select('published_at')
+        .eq('id', id)
+        .single()
+
+    let publishedAt = existingBlog?.published_at
+    if (published && !publishedAt) {
+        publishedAt = new Date().toISOString()
+    }
 
     const { error } = await supabase
         .from('blogs')
@@ -55,7 +71,8 @@ export async function updateBlog(id: string, formData: FormData) {
             tags,
             published,
             content,
-            published_at: published ? new Date().toISOString() : null,
+            published_at: publishedAt,
+            updated_at: new Date().toISOString(),
         })
         .eq('id', id)
 
@@ -67,4 +84,13 @@ export async function updateBlog(id: string, formData: FormData) {
     revalidatePath(`/blog`)
     revalidatePath('/admin/blog')
     redirect('/admin/blog')
+}
+
+function generateExcerpt(html: string) {
+    if (!html) return ''
+    const text = html
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+    return text.slice(0, 160) + (text.length > 160 ? '...' : '')
 }

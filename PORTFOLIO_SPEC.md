@@ -132,29 +132,28 @@
       - id: uuid (PK)
       - slug: string (required, unique)
       - title: string (required)
-      - excerpt: string (required, default "")
-      - content: jsonb (required, default {})
+      - excerpt: string (auto-generated from content)
+      - content: jsonb (required, default { "html": "" })
       - thumbnail_asset_id: uuid (nullable, FK -> assets.id)
-      - year: number (int, nullable)
       - category: string (nullable)
       - tags: string[] (default [])
-      - published: boolean (required, default true)
-      - published_at: date (nullable)
+      - published: boolean (required, default false)
+      - published_at: timestamptz (nullable, managed by system)
       - created_at: timestamptz (default now)
       - updated_at: timestamptz (default now)
-      Indexes: [published+year+published_at], [slug unique]
+      Indexes: [published+published_at desc], [slug unique]
     </works>
 
     <blogs>
       - id: uuid (PK)
       - slug: string (required, unique)
       - title: string (required)
-      - excerpt: string (required, default "")
-      - content: jsonb (required, default {})
+      - excerpt: string (auto-generated from content)
+      - content: jsonb (required, default { "html": "" })
       - cover_asset_id: uuid (nullable, FK -> assets.id)
       - tags: string[] (default [])
-      - published: boolean (required, default true)
-      - published_at: date (nullable)
+      - published: boolean (required, default false)
+      - published_at: timestamptz (nullable, managed by system)
       - created_at: timestamptz (default now)
       - updated_at: timestamptz (default now)
       Indexes: [published+published_at desc], [slug unique]
@@ -280,7 +279,7 @@
         Desktop:
         - Vertical list, gap 18px
         - Work row: thumbnail 240x180, content area min 520px
-        - Year badge: bg #2F2941, text #FFFFFF, radius 12px, padding 2px 10px
+        - Metadata badge: Show full published date (Managed by system)
         Mobile:
         - Thumbnail full width (stacked), content below (gap 10px)
       </list>
@@ -307,9 +306,10 @@
       </content>
       <admin_editor>
         Client-only (admin):
-        - BlockEditor with drag-and-drop blocks
-        - UploadDropzone for images/pdf/audio
-        - Autosave: debounce 1200ms; show “Saving…” and “Saved” states
+        - TiptapEditor (Notion-style) with slash commands.
+        - Automated metadata: "Published" and "Last Modified" timestamps.
+        - Auto-generated excerpt from first 160 characters of content.
+        - Compact thumbnail selector (aspect 16:5).
       </admin_editor>
       <states>
         - Loading skeleton: 8 blocks
@@ -341,7 +341,11 @@
         - Server: fetch blog by slug + attachments referenced in content
       </header>
       <admin_editor>
-        Client-only (admin): BlockEditor (same as works)
+        Client-only (admin):
+        - TiptapEditor (Notion-style) with slash commands.
+        - Automated metadata: "Published" and "Last Modified" timestamps.
+        - Auto-generated excerpt from first 160 characters of content.
+        - Simplified media: Cover image optional; no dedicated thumbnail area required.
       </admin_editor>
     </blog_detail_view>
 
