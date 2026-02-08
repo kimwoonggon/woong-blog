@@ -31,4 +31,7 @@ This document tracks technical issues that have been identified and resolved dur
 
 ## 5. Error Handling
 - **Issue**: Navigating to a non-existent URL caused a generic application crash.
-- **Resolution**: Created `src/app/not-found.tsx` to display a user-friendly 404 page.
+
+## 6. Home Page Interactivity
+- **Issue**: "Recent Posts" on the home page were not clickable, unlike the "Works" section.
+- **Resolution**: Wrapped blog post titles in `Link` components in `src/app/(public)/page.tsx` to allow direct navigation to the post detail page.

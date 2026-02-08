@@ -252,7 +252,7 @@
         Mobile:
         - Stack: gap 16px; Single column.
         Card content order:
-        - Title (18px, weight 700)
+        - Title (18px, weight 700; **Clickable Link** to blog detail)
         - Meta row (date + tags) (14px, color #6B667A)
         - Excerpt (14px, 2-line clamp)
         Empty state:

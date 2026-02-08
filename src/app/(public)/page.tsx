@@ -105,7 +105,11 @@ export default async function HomePage() {
               return (
                 <Card key={post.id} className="border-none shadow-sm">
                   <CardHeader>
-                    <CardTitle className="text-xl font-bold">{post.title}</CardTitle>
+                    <CardTitle className="text-xl font-bold">
+                      <Link href={`/blog/${post.slug}`} className="hover:text-[#00A8CC] transition-colors">
+                        {post.title}
+                      </Link>
+                    </CardTitle>
                     <div className="flex gap-4 text-base text-gray-600 dark:text-gray-400">
                       <span>{publishDate}</span>
                       {post.tags?.[0] && (
