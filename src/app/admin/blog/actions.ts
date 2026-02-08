@@ -16,7 +16,18 @@ export async function createBlog(formData: FormData) {
     // Auto-generate excerpt from content
     const excerpt = generateExcerpt(content.html)
 
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+    // Generate slug supporting Unicode (e.g. Korean)
+    let slug = title.trim().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\p{L}\p{N}-]+/gu, '') // Keep Unicode letters and numbers
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+
+    // Fallback if slug is empty (e.g. only emojis)
+    if (!slug) {
+        slug = `post-${Date.now()}`
+    }
+
 
     const { error } = await supabase
         .from('blogs')
@@ -35,8 +46,9 @@ export async function createBlog(formData: FormData) {
         return { error: error.message }
     }
 
-    revalidatePath('/blog')
-    revalidatePath('/admin/blog')
+    revalidatePath('/', 'page')
+    revalidatePath('/blog', 'page')
+    revalidatePath('/admin/blog', 'page')
     redirect('/admin/blog')
 }
 
@@ -48,8 +60,21 @@ export async function updateBlog(id: string, formData: FormData) {
     const published = formData.get('published') === 'on'
     const content = formData.get('content') ? JSON.parse(formData.get('content') as string) : {}
 
+    // Generate slug supporting Unicode (e.g. Korean)
+    let slug = title.trim().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\p{L}\p{N}-]+/gu, '') // Keep Unicode letters and numbers
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+
+    // Fallback if slug is empty (e.g. only emojis)
+    if (!slug) {
+        slug = `post-${Date.now()}`
+    }
+
     // Auto-generate excerpt from content
     const excerpt = generateExcerpt(content.html)
+
 
     // Find existing blog to check for metadata
     const { data: existingBlog } = await supabase
@@ -67,6 +92,7 @@ export async function updateBlog(id: string, formData: FormData) {
         .from('blogs')
         .update({
             title,
+            slug,
             excerpt,
             tags,
             published,
@@ -81,8 +107,10 @@ export async function updateBlog(id: string, formData: FormData) {
         return { error: error.message }
     }
 
-    revalidatePath(`/blog`)
-    revalidatePath('/admin/blog')
+    revalidatePath('/', 'page')
+    revalidatePath(`/blog/${encodeURIComponent(slug)}`, 'page') // Blog detail
+    revalidatePath(`/blog`, 'page')
+    revalidatePath('/admin/blog', 'page')
     redirect('/admin/blog')
 }
 
@@ -94,3 +122,24 @@ function generateExcerpt(html: string) {
         .trim()
     return text.slice(0, 160) + (text.length > 160 ? '...' : '')
 }
+
+export async function deleteBlog(id: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    const { error } = await supabase
+        .from('blogs')
+        .delete()
+        .eq('id', id)
+
+    if (error) {
+        console.error('Error deleting blog:', error)
+        return { error: error.message }
+    }
+
+    revalidatePath('/', 'page') // Home page (Recent Posts)
+    revalidatePath('/blog', 'page') // Blog list
+    revalidatePath('/admin/blog', 'page') // Admin list
+}
+

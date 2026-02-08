@@ -431,7 +431,9 @@
         - Content: Notion-style Rich Text Editor (Tiptap)
           - Markdown shortcuts: # (H1), ## (H2), ### (H3), - (List), * (List), ``` (Code)
           - Slash Command Menu (`/`): Searchable list for all block types (Headings, Lists, Images, 3D Model, HTML Widget, Code Block).
-          - Code Blocks: Integrated syntax highlighting via `lowlight` (highlight.js) for multiple languages.
+            - Support for **keyboard navigation** (Up/Down/Enter) with **automatic scrolling** to keep selected items in view.
+            - Support for **shortcuts/aliases** (e.g., `/c` for Code Block, `/1` for Heading 1, `/3` for 3D Model).
+
           - Bubble Menu: Floating toolbar for Bold, Italic, Strike, Highlight, and Headings
           - Fixed Toolbar: Standard formatting options (Undo, Redo, Headings, Lists, Images, Links, 3D, HTML)
           - Image handling: Drag-and-drop or upload via dialog (saves to Supabase Storage)
@@ -625,7 +627,23 @@
   </aesthetic_guidelines>
 
   <advanced_functionality>
+    <content_management_enhancements>
+      - **Slug Generation**:
+        - Unicode-aware logic supports Korean and other non-ASCII titles (e.g., "안녕하세요" -> "안녕하세요").
+        - Automatic fallback to timestamp-based slugs (`post-123456`) if generation results in an empty string (e.g. emoji-only titles).
+        - Slugs are **regenerated on update**, ensuring that renaming a post fixes any broken URL issues.
+      - **Metadata / SEO**:
+        - Dynamic `generateMetadata` implementation for detail pages.
+        - Correctly decodes Unicode slugs to fetch title and excerpt for SEO tags.
+      - **Deletion**:
+        - Client-side `DeleteButton` with confirmation dialog.
+        - Server-side actions (`deleteWork`, `deleteBlog`) securely remove records and revalidate cache.
+    </content_management_enhancements>
+
     <notion_like_editor_v2>
+      - **Performance**:
+        - `lowlight/common` (35 languages) used instead of `all` (190+) to drastically reduce bundle size and main-thread blocking.
+        - **No Debounce**: `onChange` fires immediately to ensure data integrity during rapid saves.
       - Block reordering with drag handles and keyboard shortcuts
       - Slash command menu ("/") to insert blocks
       - Inline image captions and resizing
@@ -792,7 +810,9 @@
     - **HTML Widget**: Allows direct insertion of custom HTML/CSS for advanced formatting or external embeds.
 - **Slash Command Menu (`/`)**:
   - Typing `/` at the start of a line opens a searchable command palette.
-  - Supports all block types with keyboard navigation (Up/Down/Enter).
+  - Supports all block types with keyboard navigation (Up/Down/Enter) and automatic scrolling for long lists.
+  - Supports quick shortcuts (e.g., `/c` for Code Block, `/h` for HTML Widget).
+
 - **Public View Hydration**:
   - Custom HTML tags (e.g., `<three-js-block>`) are hydrated into interactive React components on the public-facing pages.
       Block enums:

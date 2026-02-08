@@ -9,6 +9,15 @@ interface InteractiveRendererProps {
 }
 
 export function InteractiveRenderer({ html }: InteractiveRendererProps) {
+    // Fast path: if the HTML doesn't contain any custom blocks, render it directly
+    // This provides a massive performance boost for large text content by skipping the heavy parser
+    const hasCustomBlocks = html.includes('three-js-block') || html.includes('html-snippet')
+
+    if (!hasCustomBlocks) {
+        return <div className="prose prose-lg max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: html }} />
+    }
+
+    // Slow path: use the parser only when absolutely necessary (for interactive blocks)
     const options: HTMLReactParserOptions = {
         replace: (domNode) => {
             if (domNode instanceof Element) {
@@ -26,3 +35,4 @@ export function InteractiveRenderer({ html }: InteractiveRendererProps) {
 
     return <div className="prose prose-lg max-w-none dark:prose-invert">{parse(html, options)}</div>
 }
+

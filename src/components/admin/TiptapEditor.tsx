@@ -10,7 +10,7 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
 import Link from '@tiptap/extension-link'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-import { all, createLowlight } from 'lowlight'
+import { common, createLowlight } from 'lowlight'
 import { ThreeJsBlock } from './tiptap/ThreeJsBlock'
 import { HtmlBlock } from './tiptap/HtmlBlock'
 import { SlashCommand } from './tiptap/SlashCommand'
@@ -33,7 +33,7 @@ import {
     Redo,
     Box
 } from 'lucide-react'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 interface TiptapEditorProps {
     content: string
@@ -41,8 +41,8 @@ interface TiptapEditorProps {
     placeholder?: string
 }
 
-// Initialize lowlight for syntax highlighting
-const lowlight = createLowlight(all)
+// Initialize lowlight for syntax highlighting with common languages only
+const lowlight = createLowlight(common)
 
 export function TiptapEditor({ content, onChange, placeholder = "Type '/' for commands, or just start writing..." }: TiptapEditorProps) {
     const editor = useEditor({

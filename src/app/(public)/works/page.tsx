@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function WorksPage() {
     const supabase = await createClient()

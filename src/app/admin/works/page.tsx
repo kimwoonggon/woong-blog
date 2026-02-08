@@ -5,6 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Plus, Pencil, Trash2, Eye } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { DeleteButton } from '@/components/admin/DeleteButton'
+import { deleteWork } from './actions'
+
+
+export const dynamic = 'force-dynamic'
 
 export default async function AdminWorksPage() {
     const supabase = await createClient()
@@ -71,9 +76,7 @@ export default async function AdminWorksPage() {
                                                     <Pencil className="h-4 w-4" />
                                                 </Button>
                                             </Link>
-                                            <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600 hover:bg-red-50" title="Delete">
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <DeleteButton id={work.id} action={deleteWork} />
                                         </div>
                                     </TableCell>
                                 </TableRow>

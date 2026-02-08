@@ -2,21 +2,43 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { InteractiveRenderer } from '@/components/content/InteractiveRenderer'
+import { Metadata } from 'next'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 interface PageProps {
     params: Promise<{ slug: string }>
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { slug } = await params
+    const decodedSlug = decodeURIComponent(slug)
+    const supabase = await createClient()
+
+    const { data: blog } = await supabase
+        .from('blogs')
+        .select('title, excerpt')
+        .eq('slug', decodedSlug)
+        .eq('published', true)
+        .single()
+
+    if (!blog) return {}
+
+    return {
+        title: blog.title,
+        description: blog.excerpt,
+    }
+}
+
 export default async function BlogDetailPage({ params }: PageProps) {
     const { slug } = await params
+    const decodedSlug = decodeURIComponent(slug)
     const supabase = await createClient()
 
     const { data: blog } = await supabase
         .from('blogs')
         .select('*')
-        .eq('slug', slug)
+        .eq('slug', decodedSlug)
         .eq('published', true)
         .single()
 

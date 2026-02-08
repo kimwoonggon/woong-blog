@@ -21,6 +21,7 @@ import {
 
 export const CommandList = forwardRef((props: any, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0)
+    const containerRef = React.useRef<HTMLDivElement>(null)
 
     const selectItem = (index: number) => {
         const item = props.items[index]
@@ -42,6 +43,27 @@ export const CommandList = forwardRef((props: any, ref) => {
     }
 
     useEffect(() => setSelectedIndex(0), [props.items])
+
+    useEffect(() => {
+        if (containerRef.current) {
+            const container = containerRef.current
+            const items = container.querySelectorAll('button')
+            const selectedItem = items[selectedIndex] as HTMLElement
+
+            if (selectedItem) {
+                const containerTop = container.scrollTop
+                const containerBottom = containerTop + container.offsetHeight
+                const itemTop = selectedItem.offsetTop
+                const itemBottom = itemTop + selectedItem.offsetHeight
+
+                if (itemTop < containerTop) {
+                    container.scrollTop = itemTop
+                } else if (itemBottom > containerBottom) {
+                    container.scrollTop = itemBottom - container.offsetHeight
+                }
+            }
+        }
+    }, [selectedIndex])
 
     useImperativeHandle(ref, () => ({
         onKeyDown: ({ event }: { event: KeyboardEvent }) => {
@@ -69,17 +91,18 @@ export const CommandList = forwardRef((props: any, ref) => {
             <div className="px-3 py-2 text-xs font-semibold text-gray-500 border-b dark:border-gray-800 uppercase tracking-wider">
                 Commands
             </div>
-            <div className="max-h-64 overflow-y-auto p-1">
+            <div ref={containerRef} className="max-h-64 overflow-y-auto p-1">
                 {props.items.length ? (
                     props.items.map((item: any, index: number) => (
                         <button
                             key={index}
                             onClick={() => selectItem(index)}
                             className={`flex items-center gap-3 w-full px-3 py-2 text-sm rounded-md transition-colors ${index === selectedIndex
-                                    ? 'bg-blue-600 text-white'
-                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                ? 'bg-blue-600 text-white'
+                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                                 }`}
                         >
+
                             <div className={`${index === selectedIndex ? 'text-white' : 'text-gray-500'}`}>
                                 {getIcon(item.icon)}
                             </div>

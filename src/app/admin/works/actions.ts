@@ -18,7 +18,18 @@ export async function createWork(formData: FormData) {
     const content = formData.get('content') ? JSON.parse(formData.get('content') as string) : {}
     const thumbnailFile = formData.get('thumbnailFile') as File | null
 
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+    // Generate slug supporting Unicode (e.g. Korean)
+    let slug = title.trim().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\p{L}\p{N}-]+/gu, '') // Keep Unicode letters and numbers
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+
+    // Fallback if slug is empty (e.g. only emojis)
+    if (!slug) {
+        slug = `work-${Date.now()}`
+    }
+
 
     // Auto-generate excerpt from content
     const excerpt = generateExcerpt(content.html)
@@ -54,8 +65,9 @@ export async function createWork(formData: FormData) {
         return { error: error.message }
     }
 
-    revalidatePath('/works')
-    revalidatePath('/admin/works')
+    revalidatePath('/', 'page')
+    revalidatePath('/works', 'page')
+    revalidatePath('/admin/works', 'page')
     redirect('/admin/works')
 }
 
@@ -72,8 +84,21 @@ export async function updateWork(id: string, formData: FormData) {
     const content = formData.get('content') ? JSON.parse(formData.get('content') as string) : {}
     const thumbnailFile = formData.get('thumbnailFile') as File | null
 
+    // Generate slug supporting Unicode (e.g. Korean)
+    let slug = title.trim().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\p{L}\p{N}-]+/gu, '') // Keep Unicode letters and numbers
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+
+    // Fallback if slug is empty (e.g. only emojis)
+    if (!slug) {
+        slug = `work-${Date.now()}`
+    }
+
     // Auto-generate excerpt from content
     const excerpt = generateExcerpt(content.html)
+
 
     // Find existing work to check for metadata
     const { data: existingWork } = await supabase
@@ -110,6 +135,7 @@ export async function updateWork(id: string, formData: FormData) {
         .from('works')
         .update({
             title,
+            slug,
             excerpt,
             category,
             tags,
@@ -126,8 +152,10 @@ export async function updateWork(id: string, formData: FormData) {
         return { error: error.message }
     }
 
-    revalidatePath(`/works`)
-    revalidatePath('/admin/works')
+    revalidatePath('/', 'page')
+    revalidatePath(`/works/${encodeURIComponent(slug)}`, 'page') // Work detail
+    revalidatePath('/works', 'page')
+    revalidatePath('/admin/works', 'page')
     redirect('/admin/works')
 }
 
@@ -188,3 +216,27 @@ function extractFirstImageAsset(html: string) {
     }
     return null
 }
+
+export async function deleteWork(id: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    // Note: We might want to delete the thumbnail asset too if it's not used elsewhere,
+    // but that requires more complex logic. For now, we leave the asset.
+
+    const { error } = await supabase
+        .from('works')
+        .delete()
+        .eq('id', id)
+
+    if (error) {
+        console.error('Error deleting work:', error)
+        return { error: error.message }
+    }
+
+    revalidatePath('/', 'page') // Home page (Featured Works)
+    revalidatePath('/works', 'page') // Works list
+    revalidatePath('/admin/works', 'page') // Admin list
+}
+
