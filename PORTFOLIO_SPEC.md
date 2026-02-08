@@ -829,6 +829,8 @@
 
 - **Public View Hydration**:
   - Custom HTML tags (e.g., `<three-js-block>`) are hydrated into interactive React components on the public-facing pages.
+  - **KNOWN ISSUE (Resolved)**: `<html-snippet>` content must NOT be parsed with `html-react-parser` as it inserts `<html>`, `<head>`, `<body>` wrapper tags causing hydration errors.
+  - **Solution**: Use regex-based extraction in `InteractiveRenderer.tsx` to decode and render `html-snippet` content with a single `dangerouslySetInnerHTML` to avoid SSR/Client mismatch.
       Block enums:
       - type: enum (h1, h2, p, quote, ul, ol, image, file, divider, code, threeJsBlock, htmlBlock)
       - marks: enum (bold, italic, underline, highlight, link)

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
+import { AIFixDialog } from './AIFixDialog'
 import { TiptapEditor } from '@/components/admin/TiptapEditor'
 import { createWork, updateWork } from '@/app/admin/works/actions'
 import { ImageIcon, X } from 'lucide-react'
@@ -35,6 +36,7 @@ interface WorkEditorProps {
 
 export function WorkEditor({ initialWork }: WorkEditorProps) {
     const [html, setHtml] = useState<string>(initialWork?.content?.html || '')
+    const [title, setTitle] = useState<string>(initialWork?.title || '') // Add title state
     const [thumbnail, setThumbnail] = useState<string | null>(initialWork?.thumbnail_url || null)
     const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
     const [icon, setIcon] = useState<string | null>(initialWork?.icon_url || null)
@@ -112,7 +114,13 @@ export function WorkEditor({ initialWork }: WorkEditorProps) {
             <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                     <Label htmlFor="title">Title</Label>
-                    <Input id="title" name="title" required defaultValue={initialWork?.title} />
+                    <Input
+                        id="title"
+                        name="title"
+                        required
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>
@@ -234,9 +242,19 @@ export function WorkEditor({ initialWork }: WorkEditorProps) {
                 </div>
             </div>
 
+
             <div className="space-y-4 rounded-md border p-6 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-medium">Content</h3>
+                    <div className="flex items-center gap-4">
+                        <h3 className="text-lg font-medium">Content</h3>
+                        <AIFixDialog
+                            content={html}
+                            onApply={setHtml}
+                            apiEndpoint="/api/ai/enrich-work"
+                            title="AI Project Enricher"
+                            extraBodyParams={{ title }}
+                        />
+                    </div>
                     <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-full border">
                         <Checkbox id="published" name="published" defaultChecked={initialWork?.published} />
                         <Label htmlFor="published" className="text-sm cursor-pointer">Published</Label>

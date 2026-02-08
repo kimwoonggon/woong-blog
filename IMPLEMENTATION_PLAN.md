@@ -1,50 +1,36 @@
-# IMPLEMENTATION PLAN - Works Enhancement
+# Fix Hydration Error in InteractiveRenderer
 
-## Project Goal
-Refine the `works` feature to support project periods, icons, and flexible metadata properties. This includes database updates, admin editor enhancements, and public UI updates.
+## Goal
+Prevent "Hydration failed" errors caused by users pasting full HTML documents (including `<html>`, `<head>`, `<body>` tags) into the content editor. The `InteractiveRenderer` should automatically strip these invalid root tags before rendering the content inside a `div`.
 
-## Current Status
-- [x] Initial research and specification update.
-- [ ] Database schema updated (User: manual SQL).
-- [/] Admin dashboard support for new columns.
-- [ ] Public UI display for project periods.
-- [ ] Fix missing excerpt/content in Works list.
-- [ ] Fix missing period and excerpt fallback in Home Page "Featured works" section.
+## User Review Required
+None. This is a robust internal fix to handle invalid user input gracefully.
 
-## New Requirements (Added Mid-Project)
-- Added `icon_asset_id`, `period`, and `all_properties` to `works` table.
-- Display "프로젝트 기간" or "기간" in the public works list.
-- **Urgent Fix**: Ensure works list and home page "Featured works" display actual content/excerpt and period correctly.
-
-## Step-by-Step Plan
-- [ ] **Database & Types**
-  - [x] Support `icon_asset_id` (UUID), `period` (Text), and `all_properties` (JSONB) in TypeScript interfaces.
-- [ ] **Admin Dashboard (`/admin/works`)**
-  - [x] [MODIFY] `WorkEditor.tsx`: Add input field for `Period` and support for `icon`.
-  - [x] [MODIFY] `actions.ts`: Update server actions to persist new fields.
-  - [x] **Bug Fix**: Review `generateExcerpt` logic in `actions.ts` to ensure it handles various HTML structures.
-- [ ] **Public UI (`/works` & Home Page)**
-  - [x] [MODIFY] `WorksList` / `WorkDetail`: Display the project period metadata.
-  - [x] [MODIFY] `WorksPage.tsx`: Add fallback excerpt logic.
-  - [ ] [MODIFY] `src/app/(public)/page.tsx`: Add `period` display and fallback excerpt logic for "Featured works".
+## Proposed Changes
+### `src/components/content`
+#### [MODIFY] [InteractiveRenderer.tsx](file:///Users/wgkim/selfblog-woong/src/components/content/InteractiveRenderer.tsx)
+- Add a helper function `stripHtmlWrappers(html: string)` that removes `<!DOCTYPE ...>`, `<html>`, `</html>`, `<head>`, `</head>`, `<body>`, `</body>` tags using regular expressions.
+- Apply this function to the `html` prop before rendering or parsing.
+- Apply this function to `html-snippet` content before rendering.
 
 ## Verification Plan
-1. **Admin Panel**:
-   - Re-save existing works to trigger auto-excerpt generation.
-   - Verify `excerpt` column in Supabase (if possible).
-2. **Public View**:
-   - Navigate to `/works`.
-   - Verify that all items have visible description text and period.
-3. **Home Page**:
-   - Navigate to `/`.
-   - Verify "Featured works" section displays period and correct excerpt.
+### Manual Verification
+1.  **Navigate** to the "Introduction" page editor or any page using `InteractiveRenderer`.
+2.  **Paste** a full HTML structure into the content:
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+        <p>Test content verify</p>
+    </body>
+    </html>
+    ```
+3.  **Save** and **View** the page.
+4.  **Verify** that the page renders "Test content verify" without crashing or showing a hydration error in the console.
 
-
-## Verification Plan
-1. **Admin Panel**:
-   - Navigate to `/admin/works`.
-   - Create/Edit a work and set a "Project Period" (e.g., "2024.01 - 2024.03").
-   - Save and verify database persistence via Supabase dashboard or re-editing.
-2. **Public View**:
-   - Navigate to `/works`.
-   - Verify that the "Project Period" (기간) is displayed correctly.
+## New/Changed Requirements
+### Fix Introduction Visibility
+- **Issue**: The `stripHtmlWrappers` regex fails to strip tags with whitespace (e.g., `< html>`), causing hydration errors. It also needs to preserve `<html-snippet>`.
+- **Fix**: Update regex to handle optional whitespace and use negative lookahead to preserve `<html-snippet>`.
+  - Proposed Regex: `/<\s*\/?\s*html(?!-)(?:\s[^>]*)?>/gi`
+- **Target**: `src/components/content/InteractiveRenderer.tsx`.
