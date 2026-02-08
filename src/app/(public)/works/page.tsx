@@ -85,7 +85,9 @@ export default async function WorksPage() {
                                         )}
                                     </div>
                                     <p className="mb-4 text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
-                                        {work.excerpt}
+                                        {work.excerpt || (work.content?.html ?
+                                            work.content.html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160) + '...'
+                                            : 'Click to view details')}
                                     </p>
                                     <div className="flex flex-wrap gap-2">
                                         {work.tags?.map((tag: string) => (

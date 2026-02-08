@@ -8,19 +8,32 @@ Refine the `works` feature to support project periods, icons, and flexible metad
 - [ ] Database schema updated (User: manual SQL).
 - [/] Admin dashboard support for new columns.
 - [ ] Public UI display for project periods.
+- [ ] Fix missing excerpt/content in Works list.
 
 ## New Requirements (Added Mid-Project)
 - Added `icon_asset_id`, `period`, and `all_properties` to `works` table.
 - Display "프로젝트 기간" or "기간" in the public works list.
+- **Urgent Fix**: Ensure works list displays actual content/excerpt correctly.
 
 ## Step-by-Step Plan
 - [ ] **Database & Types**
-  - [ ] Support `icon_asset_id` (UUID), `period` (Text), and `all_properties` (JSONB) in TypeScript interfaces.
+  - [x] Support `icon_asset_id` (UUID), `period` (Text), and `all_properties` (JSONB) in TypeScript interfaces.
 - [ ] **Admin Dashboard (`/admin/works`)**
-  - [ ] [MODIFY] `WorkEditor.tsx`: Add input field for `Period` and support for `icon`.
-  - [ ] [MODIFY] `actions.ts`: Update server actions to persist new fields.
+  - [x] [MODIFY] `WorkEditor.tsx`: Add input field for `Period` and support for `icon`.
+  - [x] [MODIFY] `actions.ts`: Update server actions to persist new fields.
+  - [ ] **Bug Fix**: Review `generateExcerpt` logic in `actions.ts` to ensure it handles various HTML structures.
 - [ ] **Public UI (`/works`)**
-  - [ ] [MODIFY] `WorksList` / `WorkDetail`: Display the project period metadata.
+  - [x] [MODIFY] `WorksList` / `WorkDetail`: Display the project period metadata.
+  - [ ] **Bug Fix**: Modify `WorksPage.tsx` to handle cases where `excerpt` might be empty or too short.
+
+## Verification Plan
+1. **Admin Panel**:
+   - Re-save existing works to trigger auto-excerpt generation.
+   - Verify `excerpt` column in Supabase (if possible).
+2. **Public View**:
+   - Navigate to `/works`.
+   - Verify that all items have visible description text below the title.
+
 
 ## Verification Plan
 1. **Admin Panel**:
