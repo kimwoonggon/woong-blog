@@ -135,7 +135,10 @@
       - excerpt: string (auto-generated from content)
       - content: jsonb (required, default { "html": "" })
       - thumbnail_asset_id: uuid (nullable, FK -> assets.id)
+      - icon_asset_id: uuid (nullable, FK -> assets.id) - icon or logo for the work
       - category: string (nullable)
+      - period: text (nullable) - Project duration/period (e.g., "2024.01 - 2024.03")
+      - all_properties: jsonb (default '{}') - Flexible metadata storage
       - tags: string[] (default [])
       - published: boolean (required, default false)
       - published_at: timestamptz (nullable, managed by system)
@@ -279,9 +282,10 @@
         Desktop:
         - Vertical list, gap 18px
         - Work row: thumbnail 240x180, content area min 520px
-        - Metadata badge: Show full published date (Managed by system)
+        - Metadata badge: Show period/duration and full published date
         Mobile:
         - Thumbnail full width (stacked), content below (gap 10px)
+        - Metadata: Show period/duration clearly
       </list>
       <admin_actions>
         Client-only (admin):
@@ -310,6 +314,10 @@
         - Automated metadata: "Published" and "Last Modified" timestamps.
         - Auto-generated excerpt from first 160 characters of content.
         - Compact thumbnail selector (aspect 16:5).
+        - Additional Fields:
+          - Project Period (Text input)
+          - Icon Asset Selector (Optional logo/icon)
+          - Metadata Editor (JSON/Flexible fields for all_properties)
       </admin_editor>
       <states>
         - Loading skeleton: 8 blocks

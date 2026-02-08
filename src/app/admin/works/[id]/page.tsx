@@ -20,6 +20,10 @@ export default async function EditWorkPage({ params }: PageProps) {
             thumbnail:thumbnail_asset_id (
                 bucket,
                 path
+            ),
+            icon:icon_asset_id (
+                bucket,
+                path
             )
         `)
         .eq('id', id)
@@ -36,9 +40,17 @@ export default async function EditWorkPage({ params }: PageProps) {
         thumbnailUrl = publicUrl
     }
 
+    // Resolve icon URL
+    let iconUrl = null
+    if (work.icon) {
+        const { data: { publicUrl } } = supabase.storage.from(work.icon.bucket).getPublicUrl(work.icon.path)
+        iconUrl = publicUrl
+    }
+
     const initialWork = {
         ...work,
-        thumbnail_url: thumbnailUrl
+        thumbnail_url: thumbnailUrl,
+        icon_url: iconUrl
     }
 
     return (

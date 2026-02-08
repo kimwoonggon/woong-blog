@@ -78,6 +78,11 @@ export default async function WorksPage() {
                                             {publishDate}
                                         </Badge>
                                         <span className="text-gray-500 dark:text-gray-400 font-medium">{work.category}</span>
+                                        {work.period && (
+                                            <span className="text-sm border-l pl-3 text-gray-400 dark:text-gray-500 font-mono">
+                                                {work.period}
+                                            </span>
+                                        )}
                                     </div>
                                     <p className="mb-4 text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
                                         {work.excerpt}

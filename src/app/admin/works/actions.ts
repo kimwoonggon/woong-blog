@@ -13,10 +13,13 @@ export async function createWork(formData: FormData) {
 
     const title = formData.get('title') as string
     const category = formData.get('category') as string
+    const period = formData.get('period') as string
     const tags = (formData.get('tags') as string).split(',').map(tag => tag.trim())
     const published = formData.get('published') === 'on'
     const content = formData.get('content') ? JSON.parse(formData.get('content') as string) : {}
     const thumbnailFile = formData.get('thumbnailFile') as File | null
+    const iconFile = formData.get('iconFile') as File | null
+    const all_properties = formData.get('all_properties') ? JSON.parse(formData.get('all_properties') as string) : {}
 
     // Generate slug supporting Unicode (e.g. Korean)
     let slug = title.trim().toLowerCase()
@@ -41,6 +44,12 @@ export async function createWork(formData: FormData) {
         thumbnailAssetId = await uploadThumbnail(supabase, user.id, thumbnailFile)
     }
 
+    let iconAssetId = null
+    // 2. Handle explicit icon upload
+    if (iconFile && iconFile.size > 0) {
+        iconAssetId = await uploadThumbnail(supabase, user.id, iconFile)
+    }
+
     // 2. Fallback to first image in content if no thumbnail
     if (!thumbnailAssetId) {
         thumbnailAssetId = extractFirstImageAsset(content.html)
@@ -53,11 +62,14 @@ export async function createWork(formData: FormData) {
             slug,
             excerpt,
             category,
+            period,
             tags,
             published,
             content,
+            all_properties,
             published_at: published ? new Date().toISOString() : null,
             thumbnail_asset_id: thumbnailAssetId,
+            icon_asset_id: iconAssetId,
         })
 
     if (error) {
@@ -79,10 +91,13 @@ export async function updateWork(id: string, formData: FormData) {
 
     const title = formData.get('title') as string
     const category = formData.get('category') as string
+    const period = formData.get('period') as string
     const tags = (formData.get('tags') as string).split(',').map(tag => tag.trim())
     const published = formData.get('published') === 'on'
     const content = formData.get('content') ? JSON.parse(formData.get('content') as string) : {}
     const thumbnailFile = formData.get('thumbnailFile') as File | null
+    const iconFile = formData.get('iconFile') as File | null
+    const all_properties = formData.get('all_properties') ? JSON.parse(formData.get('all_properties') as string) : {}
 
     // Generate slug supporting Unicode (e.g. Korean)
     let slug = title.trim().toLowerCase()
@@ -103,11 +118,12 @@ export async function updateWork(id: string, formData: FormData) {
     // Find existing work to check for metadata
     const { data: existingWork } = await supabase
         .from('works')
-        .select('thumbnail_asset_id, published_at')
+        .select('thumbnail_asset_id, icon_asset_id, published_at')
         .eq('id', id)
         .single()
 
     let thumbnailAssetId = null
+    let iconAssetId = null
     let publishedAt = existingWork?.published_at
 
     // Check for existing thumbnail if no new file is uploaded
@@ -115,6 +131,13 @@ export async function updateWork(id: string, formData: FormData) {
         thumbnailAssetId = await uploadThumbnail(supabase, user.id, thumbnailFile)
     } else {
         thumbnailAssetId = existingWork?.thumbnail_asset_id
+    }
+
+    // Check for existing icon if no new file is uploaded
+    if (iconFile && iconFile.size > 0) {
+        iconAssetId = await uploadThumbnail(supabase, user.id, iconFile)
+    } else {
+        iconAssetId = existingWork?.icon_asset_id
     }
 
     // Fallback to first image in content if still no thumbnail
@@ -138,11 +161,14 @@ export async function updateWork(id: string, formData: FormData) {
             slug,
             excerpt,
             category,
+            period,
             tags,
             published,
             content,
+            all_properties,
             published_at: publishedAt,
             thumbnail_asset_id: thumbnailAssetId,
+            icon_asset_id: iconAssetId,
             updated_at: new Date().toISOString(),
         })
         .eq('id', id)
