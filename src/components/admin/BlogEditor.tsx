@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { TiptapEditor } from '@/components/admin/TiptapEditor'
 import { createBlog, updateBlog } from '@/app/admin/blog/actions'
+import { AIFixDialog } from '@/components/admin/AIFixDialog'
 
 interface Blog {
     id?: string
@@ -85,9 +86,13 @@ export function BlogEditor({ initialBlog }: BlogEditorProps) {
             <div className="space-y-4 rounded-md border p-6 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-medium">Content</h3>
-                    <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-full border">
-                        <Checkbox id="published" name="published" defaultChecked={initialBlog?.published} />
-                        <Label htmlFor="published" className="text-sm cursor-pointer">Published</Label>
+                    <div className="flex items-center gap-2">
+                        <AIFixDialog content={html} onApply={setHtml} />
+                        <div className="w-px h-6 bg-gray-200 dark:bg-gray-800 mx-1" />
+                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-full border">
+                            <Checkbox id="published" name="published" defaultChecked={initialBlog?.published} />
+                            <Label htmlFor="published" className="text-sm cursor-pointer">Published</Label>
+                        </div>
                     </div>
                 </div>
                 <TiptapEditor content={html} onChange={setHtml} />
