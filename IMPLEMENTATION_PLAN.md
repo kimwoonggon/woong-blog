@@ -9,11 +9,12 @@ Refine the `works` feature to support project periods, icons, and flexible metad
 - [/] Admin dashboard support for new columns.
 - [ ] Public UI display for project periods.
 - [ ] Fix missing excerpt/content in Works list.
+- [ ] Fix missing period and excerpt fallback in Home Page "Featured works" section.
 
 ## New Requirements (Added Mid-Project)
 - Added `icon_asset_id`, `period`, and `all_properties` to `works` table.
 - Display "프로젝트 기간" or "기간" in the public works list.
-- **Urgent Fix**: Ensure works list displays actual content/excerpt correctly.
+- **Urgent Fix**: Ensure works list and home page "Featured works" display actual content/excerpt and period correctly.
 
 ## Step-by-Step Plan
 - [ ] **Database & Types**
@@ -21,10 +22,11 @@ Refine the `works` feature to support project periods, icons, and flexible metad
 - [ ] **Admin Dashboard (`/admin/works`)**
   - [x] [MODIFY] `WorkEditor.tsx`: Add input field for `Period` and support for `icon`.
   - [x] [MODIFY] `actions.ts`: Update server actions to persist new fields.
-  - [ ] **Bug Fix**: Review `generateExcerpt` logic in `actions.ts` to ensure it handles various HTML structures.
-- [ ] **Public UI (`/works`)**
+  - [x] **Bug Fix**: Review `generateExcerpt` logic in `actions.ts` to ensure it handles various HTML structures.
+- [ ] **Public UI (`/works` & Home Page)**
   - [x] [MODIFY] `WorksList` / `WorkDetail`: Display the project period metadata.
-  - [ ] **Bug Fix**: Modify `WorksPage.tsx` to handle cases where `excerpt` might be empty or too short.
+  - [x] [MODIFY] `WorksPage.tsx`: Add fallback excerpt logic.
+  - [ ] [MODIFY] `src/app/(public)/page.tsx`: Add `period` display and fallback excerpt logic for "Featured works".
 
 ## Verification Plan
 1. **Admin Panel**:
@@ -32,7 +34,10 @@ Refine the `works` feature to support project periods, icons, and flexible metad
    - Verify `excerpt` column in Supabase (if possible).
 2. **Public View**:
    - Navigate to `/works`.
-   - Verify that all items have visible description text below the title.
+   - Verify that all items have visible description text and period.
+3. **Home Page**:
+   - Navigate to `/`.
+   - Verify "Featured works" section displays period and correct excerpt.
 
 
 ## Verification Plan
