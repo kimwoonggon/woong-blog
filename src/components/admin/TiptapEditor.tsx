@@ -39,12 +39,13 @@ interface TiptapEditorProps {
     content: string
     onChange: (html: string) => void
     placeholder?: string
+    editable?: boolean
 }
 
 // Initialize lowlight for syntax highlighting with common languages only
 const lowlight = createLowlight(common)
 
-export function TiptapEditor({ content, onChange, placeholder = "Type '/' for commands, or just start writing..." }: TiptapEditorProps) {
+export function TiptapEditor({ content, onChange, placeholder = "Type '/' for commands, or just start writing...", editable = true }: TiptapEditorProps) {
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
@@ -115,6 +116,7 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
         onUpdate: ({ editor }) => {
             onChange(editor.getHTML())
         },
+        editable,
         immediatelyRender: false,
     })
 
@@ -181,184 +183,188 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
     return (
         <div className="rounded-lg bg-white dark:bg-gray-950 border dark:border-gray-800 shadow-sm overflow-hidden">
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center gap-1 border-b px-3 py-2 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800">
-                <ToolbarButton
-                    onClick={() => editor.chain().focus().undo().run()}
-                    disabled={!editor.can().undo()}
-                    title="Undo"
-                >
-                    <Undo size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => editor.chain().focus().redo().run()}
-                    disabled={!editor.can().redo()}
-                    title="Redo"
-                >
-                    <Redo size={18} />
-                </ToolbarButton>
+            {editable && (
+                <div className="flex flex-wrap items-center gap-1 border-b px-3 py-2 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+                    <ToolbarButton
+                        onClick={() => editor.chain().focus().undo().run()}
+                        disabled={!editor.can().undo()}
+                        title="Undo"
+                    >
+                        <Undo size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => editor.chain().focus().redo().run()}
+                        disabled={!editor.can().redo()}
+                        title="Redo"
+                    >
+                        <Redo size={18} />
+                    </ToolbarButton>
 
-                <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+                    <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 1 }).run()}
-                    active={editor.isActive('heading', { level: 1 })}
-                    title="Heading 1"
-                >
-                    <Heading1 size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 2 }).run()}
-                    active={editor.isActive('heading', { level: 2 })}
-                    title="Heading 2"
-                >
-                    <Heading2 size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 3 }).run()}
-                    active={editor.isActive('heading', { level: 3 })}
-                    title="Heading 3"
-                >
-                    <Heading3 size={18} />
-                </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 1 }).run()}
+                        active={editor.isActive('heading', { level: 1 })}
+                        title="Heading 1"
+                    >
+                        <Heading1 size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 2 }).run()}
+                        active={editor.isActive('heading', { level: 2 })}
+                        title="Heading 2"
+                    >
+                        <Heading2 size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 3 }).run()}
+                        active={editor.isActive('heading', { level: 3 })}
+                        title="Heading 3"
+                    >
+                        <Heading3 size={18} />
+                    </ToolbarButton>
 
-                <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+                    <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleBold().run()}
-                    active={editor.isActive('bold')}
-                    title="Bold"
-                >
-                    <Bold size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleItalic().run()}
-                    active={editor.isActive('italic')}
-                    title="Italic"
-                >
-                    <Italic size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleStrike().run()}
-                    active={editor.isActive('strike')}
-                    title="Strikethrough"
-                >
-                    <Strikethrough size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleHighlight({ color: '#fef08a' }).run()}
-                    active={editor.isActive('highlight')}
-                    title="Highlight"
-                >
-                    <Highlighter size={18} />
-                </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleBold().run()}
+                        active={editor.isActive('bold')}
+                        title="Bold"
+                    >
+                        <Bold size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleItalic().run()}
+                        active={editor.isActive('italic')}
+                        title="Italic"
+                    >
+                        <Italic size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleStrike().run()}
+                        active={editor.isActive('strike')}
+                        title="Strikethrough"
+                    >
+                        <Strikethrough size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleHighlight({ color: '#fef08a' }).run()}
+                        active={editor.isActive('highlight')}
+                        title="Highlight"
+                    >
+                        <Highlighter size={18} />
+                    </ToolbarButton>
 
-                <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+                    <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleBulletList().run()}
-                    active={editor.isActive('bulletList')}
-                    title="Bullet List"
-                >
-                    <List size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleOrderedList().run()}
-                    active={editor.isActive('orderedList')}
-                    title="Numbered List"
-                >
-                    <ListOrdered size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleBlockquote().run()}
-                    active={editor.isActive('blockquote')}
-                    title="Blockquote"
-                >
-                    <Quote size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).toggleCodeBlock().run()}
-                    active={editor.isActive('codeBlock')}
-                    title="Code Block"
-                >
-                    <Code size={18} />
-                </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleBulletList().run()}
+                        active={editor.isActive('bulletList')}
+                        title="Bullet List"
+                    >
+                        <List size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleOrderedList().run()}
+                        active={editor.isActive('orderedList')}
+                        title="Numbered List"
+                    >
+                        <ListOrdered size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleBlockquote().run()}
+                        active={editor.isActive('blockquote')}
+                        title="Blockquote"
+                    >
+                        <Quote size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).toggleCodeBlock().run()}
+                        active={editor.isActive('codeBlock')}
+                        title="Code Block"
+                    >
+                        <Code size={18} />
+                    </ToolbarButton>
 
-                <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+                    <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-                <ToolbarButton onClick={addImage} title="Insert Image">
-                    <ImageIcon size={18} />
-                </ToolbarButton>
-                <ToolbarButton
-                    onClick={setLink}
-                    active={editor.isActive('link')}
-                    title="Add Link"
-                >
-                    <LinkIcon size={18} />
-                </ToolbarButton>
+                    <ToolbarButton onClick={addImage} title="Insert Image">
+                        <ImageIcon size={18} />
+                    </ToolbarButton>
+                    <ToolbarButton
+                        onClick={setLink}
+                        active={editor.isActive('link')}
+                        title="Add Link"
+                    >
+                        <LinkIcon size={18} />
+                    </ToolbarButton>
 
-                <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+                    <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).insertContent({ type: 'threeJsBlock' }).run()}
-                    title="Insert 3D Model"
-                >
-                    <Box size={18} />
-                </ToolbarButton>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).insertContent({ type: 'threeJsBlock' }).run()}
+                        title="Insert 3D Model"
+                    >
+                        <Box size={18} />
+                    </ToolbarButton>
 
-                <ToolbarButton
-                    onClick={() => (editor.chain().focus() as any).insertContent({ type: 'htmlBlock' }).run()}
-                    title="Insert HTML Widget"
-                >
-                    <Code size={18} />
-                </ToolbarButton>
-            </div>
+                    <ToolbarButton
+                        onClick={() => (editor.chain().focus() as any).insertContent({ type: 'htmlBlock' }).run()}
+                        title="Insert HTML Widget"
+                    >
+                        <Code size={18} />
+                    </ToolbarButton>
+                </div>
+            )}
 
             {/* Bubble Menu */}
-            <BubbleMenu
-                editor={editor}
-                className="flex items-center gap-1 bg-gray-900 dark:bg-gray-800 text-white rounded-lg shadow-xl px-2 py-1 border border-gray-700"
-            >
-                <BubbleButton
-                    onClick={() => (editor.chain().focus() as any).toggleBold().run()}
-                    active={editor.isActive('bold')}
+            {editable && (
+                <BubbleMenu
+                    editor={editor}
+                    className="flex items-center gap-1 bg-gray-900 dark:bg-gray-800 text-white rounded-lg shadow-xl px-2 py-1 border border-gray-700"
                 >
-                    <Bold size={16} />
-                </BubbleButton>
-                <BubbleButton
-                    onClick={() => (editor.chain().focus() as any).toggleItalic().run()}
-                    active={editor.isActive('italic')}
-                >
-                    <Italic size={16} />
-                </BubbleButton>
-                <BubbleButton
-                    onClick={() => (editor.chain().focus() as any).toggleStrike().run()}
-                    active={editor.isActive('strike')}
-                >
-                    <Strikethrough size={16} />
-                </BubbleButton>
-                <BubbleButton
-                    onClick={() => (editor.chain().focus() as any).toggleHighlight({ color: '#fef08a' }).run()}
-                    active={editor.isActive('highlight')}
-                >
-                    <Highlighter size={16} />
-                </BubbleButton>
-                <div className="w-px h-4 bg-gray-600 mx-1" />
-                <BubbleButton
-                    onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 1 }).run()}
-                    active={editor.isActive('heading', { level: 1 })}
-                >
-                    <Heading1 size={16} />
-                </BubbleButton>
-                <BubbleButton
-                    onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 2 }).run()}
-                    active={editor.isActive('heading', { level: 2 })}
-                >
-                    <Heading2 size={16} />
-                </BubbleButton>
-                <BubbleButton onClick={setLink} active={editor.isActive('link')}>
-                    <LinkIcon size={16} />
-                </BubbleButton>
-            </BubbleMenu>
+                    <BubbleButton
+                        onClick={() => (editor.chain().focus() as any).toggleBold().run()}
+                        active={editor.isActive('bold')}
+                    >
+                        <Bold size={16} />
+                    </BubbleButton>
+                    <BubbleButton
+                        onClick={() => (editor.chain().focus() as any).toggleItalic().run()}
+                        active={editor.isActive('italic')}
+                    >
+                        <Italic size={16} />
+                    </BubbleButton>
+                    <BubbleButton
+                        onClick={() => (editor.chain().focus() as any).toggleStrike().run()}
+                        active={editor.isActive('strike')}
+                    >
+                        <Strikethrough size={16} />
+                    </BubbleButton>
+                    <BubbleButton
+                        onClick={() => (editor.chain().focus() as any).toggleHighlight({ color: '#fef08a' }).run()}
+                        active={editor.isActive('highlight')}
+                    >
+                        <Highlighter size={16} />
+                    </BubbleButton>
+                    <div className="w-px h-4 bg-gray-600 mx-1" />
+                    <BubbleButton
+                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 1 }).run()}
+                        active={editor.isActive('heading', { level: 1 })}
+                    >
+                        <Heading1 size={16} />
+                    </BubbleButton>
+                    <BubbleButton
+                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 2 }).run()}
+                        active={editor.isActive('heading', { level: 2 })}
+                    >
+                        <Heading2 size={16} />
+                    </BubbleButton>
+                    <BubbleButton onClick={setLink} active={editor.isActive('link')}>
+                        <LinkIcon size={16} />
+                    </BubbleButton>
+                </BubbleMenu>
+            )}
 
             {/* Editor Content */}
             <div className="bg-white dark:bg-gray-950">

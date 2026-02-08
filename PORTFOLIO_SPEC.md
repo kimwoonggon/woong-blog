@@ -656,10 +656,16 @@
       - Export CSV from admin views
     </analytics_v2>
 
-    <ai_assisted_authoring_optional>
-      - Admin-only: generate excerpt, summarize long post, rewrite intro text (Gemini)
-      - Admin-only: generate infographic/slide images for works/blog posts
-    </ai_assisted_authoring_optional>
+    <ai_fix_feature>
+      - **Objective**: Fix messy blog content (text/code/images) using GPT.
+      - **Trigger**: "AI Fix" button in BlogEditor toolbar.
+      - **UI**: Split View (Original vs Fixed) for review before applying.
+      - **Processing**:
+        - Convert text to Tiptap code blocks where appropriate.
+        - Fix grammar and formatting.
+        - Preserve all image tags.
+      - **Tech**: OpenAI API (gpt-4o or similar) via `/api/ai/fix-blog`.
+    </ai_fix_feature>
   </advanced_functionality>
 
   <final_integration_test>
