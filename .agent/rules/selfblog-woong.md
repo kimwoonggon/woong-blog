@@ -22,9 +22,11 @@ You are working on a project defined by `PORTFOLIO_SPEC.md`. You must adhere to 
 - **Action**: Update the `README.md` file to keep the project usage guide up-to-date.
 
 ## 3. Workflow Enforcement
-Before generating any code:
-1. Check `PORTFOLIO_SPEC.md` for existing constraints.
-2. If the user's prompt changes those constraints, UPDATE the file first.
-3. Only then, proceed with code implementation.
+** Before marking a task as complete:
+- Check PORTFOLIO_SPEC.md for existing constraints.
+- Update the spec file first if the constraints change.
+- Implement the code.
+- Verify the feature using the browser.
+- Document the walkthrough.
 
 **CRITICAL**: Do not implement a feature that contradicts `PORTFOLIO_SPEC.md` without updating the spec file first.

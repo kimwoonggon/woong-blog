@@ -184,16 +184,23 @@ export default async function HomePage() {
                     <Link href={`/works/${work.slug}`} className="mb-4 text-2xl font-bold text-gray-900 hover:text-[#F3434F] dark:text-gray-50 transition-colors">
                       {work.title}
                     </Link>
-                    <div className="mb-4 flex items-center gap-4">
+                    <div className="mb-4 flex flex-wrap items-center gap-4">
                       <span className="rounded-full bg-[#142850] px-3 py-1 text-sm font-bold text-white">
                         {publishDate}
                       </span>
                       <span className="text-gray-500 dark:text-gray-400 font-medium">
                         {work.category}
                       </span>
+                      {work.period && (
+                        <span className="text-sm border-l pl-4 text-gray-400 dark:text-gray-500 font-mono">
+                          {work.period}
+                        </span>
+                      )}
                     </div>
-                    <p className="text-gray-600 dark:text-gray-300 line-clamp-2">
-                      {work.excerpt}
+                    <p className="text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                      {work.excerpt || (work.content?.html ?
+                        work.content.html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160) + '...'
+                        : 'Click to view details')}
                     </p>
                   </div>
                 </div>

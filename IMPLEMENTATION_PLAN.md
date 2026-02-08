@@ -1,38 +1,36 @@
-# IMPLEMENTATION PLAN
+# Fix Hydration Error in InteractiveRenderer
 
-## Project Goal
-Implement an "AI Fix" feature in the Admin Blog Editor to automatically format and clean up blog posts using an LLM (GPT).
+## Goal
+Prevent "Hydration failed" errors caused by users pasting full HTML documents (including `<html>`, `<head>`, `<body>` tags) into the content editor. The `InteractiveRenderer` should automatically strip these invalid root tags before rendering the content inside a `div`.
 
-## Current Status
-- Basic AI Fix feature implemented and verified.
-- UI improvements requested: Draggable and Resizable window.
+## User Review Required
+None. This is a robust internal fix to handle invalid user input gracefully.
 
-## Step-by-Step Plan
-- [x] Install `openai` package.
-- [x] Configure environment variables for Azure/OpenAI.
-- [x] Create `/api/ai/fix-blog` route for handling GPT requests.
-- [x] Create `AIFixDialog` component with Split View UI.
-- [x] Integrate `AIFixDialog` into `BlogEditor`.
-- [x] Refine `AIFixDialog` UI (Resizable panels, larger layout).
-- [x] Test with sample messy content (text mixed with code and images).
-- [x] Verify Code Block formatting and Image preservation.
-- [x] Research reference repo `woong-azure-inference-demo-py3-typescript` for correct Azure config.
-- [x] Refactor `/api/ai/fix-blog` to use `AzureOpenAI` client class.
-- [x] Perform end-to-end browser verification of UI.
-- [x] Document results in `walkthrough.md`.
-- [x] Fix hydration error in `Navbar` component (Radix UI ID mismatch).
-- [x] Improve `AIFixDialog` UI (Wider default size, prevent close on outside click).
-- [x] Make `AIFixDialog` draggable and resizable using `react-rnd`.
-    -   Install `react-rnd`.
-    -   Modify `DialogContent` to act as a transparent overlay.
-    -   Wrap inner interface in `Rnd` component.
-    -   Configure `dragHandleClassName` for header dragging.
-- [x] Fix hydration error in `AIFixDialog` (Radix UI `aria-controls` mismatch).
-- [x] Refine `AIFixDialog` UI: Move "Apply Changes" to header, replace `ScrollArea` with native scrolling for better UX.
+## Proposed Changes
+### `src/components/content`
+#### [MODIFY] [InteractiveRenderer.tsx](file:///Users/wgkim/selfblog-woong/src/components/content/InteractiveRenderer.tsx)
+- Add a helper function `stripHtmlWrappers(html: string)` that removes `<!DOCTYPE ...>`, `<html>`, `</html>`, `<head>`, `</head>`, `<body>`, `</body>` tags using regular expressions.
+- Apply this function to the `html` prop before rendering or parsing.
+- Apply this function to `html-snippet` content before rendering.
 
 ## Verification Plan
-- **Manual Verification**:
-    -   Open AI Fix Dialog.
-    -   Drag the window by the header.
-    -   Resize the window by dragging corners/edges.
-    -   Verify interactions inside the dialog (scrolling, clicking) still work.
+### Manual Verification
+1.  **Navigate** to the "Introduction" page editor or any page using `InteractiveRenderer`.
+2.  **Paste** a full HTML structure into the content:
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+        <p>Test content verify</p>
+    </body>
+    </html>
+    ```
+3.  **Save** and **View** the page.
+4.  **Verify** that the page renders "Test content verify" without crashing or showing a hydration error in the console.
+
+## New/Changed Requirements
+### Fix Introduction Visibility
+- **Issue**: The `stripHtmlWrappers` regex fails to strip tags with whitespace (e.g., `< html>`), causing hydration errors. It also needs to preserve `<html-snippet>`.
+- **Fix**: Update regex to handle optional whitespace and use negative lookahead to preserve `<html-snippet>`.
+  - Proposed Regex: `/<\s*\/?\s*html(?!-)(?:\s[^>]*)?>/gi`
+- **Target**: `src/components/content/InteractiveRenderer.tsx`.

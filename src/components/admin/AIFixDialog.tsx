@@ -12,9 +12,18 @@ import { Rnd } from 'react-rnd'
 interface AIFixDialogProps {
     content: string
     onApply: (fixedContent: string) => void
+    apiEndpoint?: string
+    title?: string
+    extraBodyParams?: Record<string, any>
 }
 
-export function AIFixDialog({ content, onApply }: AIFixDialogProps) {
+export function AIFixDialog({
+    content,
+    onApply,
+    apiEndpoint = '/api/ai/fix-blog',
+    title = 'AI Content Fixer',
+    extraBodyParams = {}
+}: AIFixDialogProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [fixedContent, setFixedContent] = useState<string | null>(null)
@@ -56,10 +65,13 @@ export function AIFixDialog({ content, onApply }: AIFixDialogProps) {
         setLoading(true)
         setFixedContent(null)
         try {
-            const response = await fetch('/api/ai/fix-blog', {
+            const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ html: content }),
+                body: JSON.stringify({
+                    html: content,
+                    ...extraBodyParams
+                }),
             })
 
             const data = await response.json()
@@ -81,15 +93,15 @@ export function AIFixDialog({ content, onApply }: AIFixDialogProps) {
             onApply(fixedContent)
             setOpen(false)
             setFixedContent(null)
-            toast.success('AI Fix applied successfully')
+            toast.success('AI changes applied successfully')
         }
     }
 
     if (!isMounted) {
         return (
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" type="button">
                 <Wand2 size={16} />
-                AI Fix
+                {title}
             </Button>
         )
     }
@@ -97,9 +109,9 @@ export function AIFixDialog({ content, onApply }: AIFixDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2" type="button">
                     <Wand2 size={16} />
-                    AI Fix
+                    {title}
                 </Button>
             </DialogTrigger>
             {/* 
@@ -139,7 +151,7 @@ export function AIFixDialog({ content, onApply }: AIFixDialogProps) {
                         <DialogHeader className="p-4 border-b shrink-0 pointer-events-none flex flex-row items-center justify-between space-y-0">
                             <DialogTitle className="flex items-center gap-2">
                                 <Wand2 className="w-5 h-5" />
-                                AI Content Fixer
+                                {title}
                             </DialogTitle>
                             <div className="flex items-center gap-2 pointer-events-auto">
                                 <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>

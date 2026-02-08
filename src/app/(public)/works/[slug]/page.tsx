@@ -69,6 +69,11 @@ export default async function WorkDetailPage({ params }: PageProps) {
                         {publishDate}
                     </Badge>
                     <span className="text-gray-500 dark:text-gray-400 font-medium">{work.category}</span>
+                    {work.period && (
+                        <span className="text-sm border-l pl-4 text-gray-400 dark:text-gray-500 font-mono">
+                            {work.period}
+                        </span>
+                    )}
                 </div>
                 <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed border-l-4 border-[#FF7B54] pl-4 py-2 bg-gray-50 dark:bg-gray-900 rounded-r-lg">
                     {work.excerpt}
