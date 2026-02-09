@@ -163,3 +163,23 @@ Address critical issues identified in the [Code Review Report](file:///Users/wgk
 ### Automated
 - [ ] **Lint**: `npm run lint` passes with 0 errors.
 - [ ] **Type Check**: `npm run type-check` passes.
+
+# System Architecture Analysis
+
+## Goal
+Analyze and document the current system architecture, focusing on Frontend (Next.js App Router), Backend (API Routes), Database (Supabase), and CI/CD pipelines to ensure scalability and maintainability.
+
+## Proposed Changes
+### Documentation
+#### [NEW] [ARCHITECTURE.md](file:///Users/wgkim/selfblog-woong/ARCHITECTURE.md)
+- Comprehensive analysis covering:
+  - High-Level System Overview (Mermaid Diagram)
+  - Frontend Architecture (Tech Stack, Component Structure)
+  - App Router & Navigation (Routing Map, SSR vs CSR)
+  - Database Architecture (Schema ERD, RLS Policies)
+  - CI/CD Pipeline (GitHub Actions Workflow)
+
+## Verification Plan
+### Manual Verification
+- [x] **Review Document**: Verify `ARCHITECTURE.md` is accurate and diagrams render correctly.
+
