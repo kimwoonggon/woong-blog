@@ -61,7 +61,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
     return (
         <article className="container mx-auto max-w-3xl px-4 py-8 md:px-6 md:py-12">
             <header className="mb-8">
-                <h1 className="mb-4 text-3xl font-bold md:text-4xl text-gray-900 dark:text-gray-50 leading-tight">
+                <h1 className="mb-4 text-3xl font-heading font-bold md:text-4xl text-gray-900 dark:text-gray-50 leading-tight">
                     {work.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-4 mb-6">
