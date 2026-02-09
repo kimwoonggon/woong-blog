@@ -793,11 +793,37 @@
   <build_output>
     <build_command>npm run build</build_command>
     <output_directory>.next/</output_directory>
-    <deployment_notes>
-      - Recommended deployment on Vercel.
-      - Ensure SUPABASE_SERVICE_ROLE_KEY is configured as a server-only env var.
     </deployment_notes>
   </build_output>
+
+  <ci_cd_plan>
+    <overview>
+      GitHub Actions based CI/CD pipeline with Docker build validation and Vercel deployment.
+    </overview>
+    <pipeline_structure>
+      <trigger>
+        - Push to main branch
+        - Pull Requests targeting main branch
+      </trigger>
+      <jobs>
+        <job_1_docker_ci>
+          - Name: Build Check (Docker)
+          - Steps: checkout code, setup docker buildx, cache layers, build image (no push).
+          - Goal: Verify build integrity in containerized environment.
+        </job_1_docker_ci>
+        <job_2_vercel_cd>
+          - Name: Deploy (Vercel)
+          - Condition: Only on push to main AND after Docker CI success.
+          - Steps: deploy using amondnet/vercel-action.
+          - Secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID.
+        </job_2_vercel_cd>
+      </jobs>
+    </pipeline_structure>
+    <docker_strategy>
+      - Multi-stage build: deps (install), builder (build), runner (production run).
+      - Optimization: utilize next.config.ts output: 'standalone'.
+    </docker_strategy>
+  </ci_cd_plan>
 
   <key_implementation_notes>
 

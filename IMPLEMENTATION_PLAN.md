@@ -88,3 +88,36 @@ Implement the "Kinetic Minimalism" design system approved by the user, including
     - Navigate to `/works`.
     - Verify cards dovetail into each other.
     - Resize window to check responsiveness.
+
+# CI/CD Pipeline Setup
+
+## Goal
+Establish a robust CI/CD pipeline using GitHub Actions to verify builds via Docker and deploy to Vercel automatically on changes to `main`.
+
+## User Review Required
+- **Secrets**: User must add `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` to GitHub Repository Secrets.
+
+## Proposed Changes
+### Configuration
+#### [MODIFY] [next.config.ts](file:///Users/wgkim/selfblog-woong/next.config.ts)
+- Add `output: 'standalone'` to enable optimized Docker builds.
+
+### Project Root
+#### [NEW] [Dockerfile](file:///Users/wgkim/selfblog-woong/Dockerfile)
+- Multi-stage build: `deps`, `builder`, `runner`.
+- Uses `node:20-alpine`.
+
+#### [NEW] [.dockerignore](file:///Users/wgkim/selfblog-woong/.dockerignore)
+- Exclude `node_modules`, `.next`, `.git`, local env files.
+
+#### [NEW] [.github/workflows/ci-cd.yml](file:///Users/wgkim/selfblog-woong/.github/workflows/ci-cd.yml)
+- Job 1: Build Docker image (CI).
+- Job 2: Deploy to Vercel (CD) - dependent on Job 1, runs on `main` only.
+
+## Verification Plan
+### Automated
+- **CI Run**: Push these changes to a branch and verify the GitHub Action "Build Check (Docker)" passes.
+- **CD Run**: Merge to `main` and verify "Deploy (Vercel)" runs and successfully deploys to Vercel.
+
+### Manual
+- [x] **Local Docker Build**: Run `docker build -t test-build .` locally to verify Dockerfile correctness before pushing.
