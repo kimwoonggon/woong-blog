@@ -78,10 +78,11 @@ export async function POST(req: Request) {
         const cleanHtml = fixedHtml.replace(/^```html\s*|\s*```$/g, '')
 
         return NextResponse.json({ fixedHtml: cleanHtml })
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('AI Fix Error:', error)
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         return NextResponse.json(
-            { error: error.message || 'Failed to process content, check server logs.' },
+            { error: errorMessage || 'Failed to process content, check server logs.' },
             { status: 500 }
         )
     }

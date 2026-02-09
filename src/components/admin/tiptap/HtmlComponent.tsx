@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react'
 import { Code, Eye, Edit3 } from 'lucide-react'
 

@@ -14,15 +14,14 @@ interface Asset {
 }
 
 interface ResumeEditorProps {
-    initialResumeId: string | null
     resumeAsset: Asset | null
 }
 
-export function ResumeEditor({ initialResumeId, resumeAsset }: ResumeEditorProps) {
+export function ResumeEditor({ resumeAsset }: ResumeEditorProps) {
     const router = useRouter()
     const [isUploading, setIsUploading] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
-    const [resumeId, setResumeId] = useState(initialResumeId)
+
     const [asset, setAsset] = useState<Asset | null>(resumeAsset)
 
     const resumeUrl = asset ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${asset.bucket}/${asset.path}` : null
@@ -63,12 +62,13 @@ export function ResumeEditor({ initialResumeId, resumeAsset }: ResumeEditorProps
 
             if (!settingsRes.ok) throw new Error('Failed to link resume to settings')
 
-            setResumeId(uploadData.id)
+
             setAsset({ id: uploadData.id, bucket: 'public-resume', path: uploadData.path })
             toast.success('Resume uploaded and linked!', { id: toastId })
             router.refresh()
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to upload', { id: toastId })
+        } catch (error: unknown) {
+            const err = error as Error
+            toast.error(err.message || 'Failed to upload', { id: toastId })
         } finally {
             setIsUploading(false)
         }
@@ -101,12 +101,13 @@ export function ResumeEditor({ initialResumeId, resumeAsset }: ResumeEditorProps
                 // We proceed since it's already unlinked from settings
             }
 
-            setResumeId(null)
+
             setAsset(null)
             toast.success('Resume removed successfully!', { id: toastId })
             router.refresh()
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to remove', { id: toastId })
+        } catch (error: unknown) {
+            const err = error as Error
+            toast.error(err.message || 'Failed to remove', { id: toastId })
         } finally {
             setIsDeleting(false)
         }

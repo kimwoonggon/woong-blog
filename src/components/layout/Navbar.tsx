@@ -30,6 +30,7 @@ export function Navbar({ ownerName = 'John Doe' }: NavbarProps) {
     // Fix hydration error by delaying render of Sheet (which generates random IDs)
     // until client-side mount.
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsMounted(true)
     }, [])
 

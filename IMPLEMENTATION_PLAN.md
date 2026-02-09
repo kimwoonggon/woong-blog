@@ -121,3 +121,45 @@ Establish a robust CI/CD pipeline using GitHub Actions to verify builds via Dock
 
 ### Manual
 - [x] **Local Docker Build**: Run `docker build -t test-build .` locally to verify Dockerfile correctness before pushing.
+
+# Code Review Strategy
+
+## Goal
+Establish a comprehensive code review strategy to ensure code quality, security, and adherence to the project specification across frontend, backend, database, and CI/CD layers.
+
+## proposed Changes
+### Documentation
+#### [NEW] [CODE_REVIEW_STRATEGY.md](file:///Users/wgkim/.gemini/antigravity/brain/67b7c83c-751c-4b38-b022-f9381141d112/CODE_REVIEW_STRATEGY.md)
+- Created a detailed strategy document covering:
+  - Automated Checks (Linting, Types, Build)
+  - Frontend Review (Architecture, Performance, UI/UX)
+  - Backend & API Review (Security, Logic)
+  - Database Review (RLS, Indexes)
+  - CI/CD & DevOps
+  - Project Specification Alignment
+
+## Verification Plan
+### Manual Verification
+- [x] **Review Document**: Verify that `CODE_REVIEW_STRATEGY.md` covers all requested areas (frontend, backend, database, api, ci/cd, ui).
+
+# Code Review Fixes
+
+## Goal
+Address critical issues identified in the [Code Review Report](file:///Users/wgkim/.gemini/antigravity/brain/67b7c83c-751c-4b38-b022-f9381141d112/CODE_REVIEW_REPORT.md).
+
+## Proposed Changes
+### Priority 1: Linting Fixes
+#### [MODIFY] [Navbar.tsx](file:///Users/wgkim/selfblog-woong/src/components/layout/Navbar.tsx)
+- Fix `useEffect` state update issue causing `react-hooks/set-state-in-effect` error.
+- Extract `useMounted` hook if necessary or use a ref-safe approach.
+
+### Priority 2: API Validation
+#### [MODIFY] [src/app/api/admin/pages/route.ts](file:///Users/wgkim/selfblog-woong/src/app/api/admin/pages/route.ts)
+#### [MODIFY] [src/app/api/admin/site-settings/route.ts](file:///Users/wgkim/selfblog-woong/src/app/api/admin/site-settings/route.ts)
+#### [MODIFY] [src/app/api/uploads/route.ts](file:///Users/wgkim/selfblog-woong/src/app/api/uploads/route.ts)
+- Implement `zod` schema validation for all request bodies.
+
+## Verification Plan
+### Automated
+- [ ] **Lint**: `npm run lint` passes with 0 errors.
+- [ ] **Type Check**: `npm run type-check` passes.

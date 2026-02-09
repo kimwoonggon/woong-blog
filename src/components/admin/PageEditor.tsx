@@ -13,7 +13,7 @@ interface Page {
     id: string
     title: string
     slug: string
-    content: any
+    content: unknown
 }
 
 interface PageEditorProps {

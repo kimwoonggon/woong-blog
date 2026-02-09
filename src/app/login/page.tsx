@@ -3,10 +3,7 @@
 
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
-
 export default function LoginPage() {
-    const router = useRouter()
     const supabase = createClient()
 
     const handleLogin = async () => {

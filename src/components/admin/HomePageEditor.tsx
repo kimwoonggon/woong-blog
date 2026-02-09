@@ -1,5 +1,6 @@
-
 "use client"
+
+import Image from 'next/image'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -104,12 +105,14 @@ export function HomePageEditor({ pageId, initialContent }: HomePageEditorProps) 
             <div className="space-y-2">
                 <Label>Profile Image</Label>
                 <div className="flex items-center gap-6">
-                    <div className="h-32 w-32 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
+                    <div className="relative h-32 w-32 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
                         {profileImageUrl ? (
-                            <img
+                            <Image
                                 src={profileImageUrl}
                                 alt="Profile"
-                                className="h-full w-full object-cover"
+                                fill
+                                className="object-cover"
+                                unoptimized
                             />
                         ) : (
                             <div className="flex h-full w-full items-center justify-center text-gray-400">

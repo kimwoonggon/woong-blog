@@ -202,9 +202,14 @@ function generateExcerpt(html: string) {
     return text.slice(0, 160).trim() + '...'
 }
 
-async function uploadThumbnail(supabase: any, userId: string, file: File) {
+import { v4 as uuidv4 } from 'uuid'
+import { SupabaseClient } from '@supabase/supabase-js'
+
+// ... existing code ...
+
+async function uploadThumbnail(supabase: SupabaseClient, userId: string, file: File) {
     const fileExt = file.name.split('.').pop()
-    const fileName = `${require('uuid').v4()}.${fileExt}`
+    const fileName = `${uuidv4()}.${fileExt}`
     const bucket = 'public-assets'
 
     const { error: uploadError } = await supabase.storage

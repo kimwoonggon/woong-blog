@@ -33,7 +33,7 @@ import {
     Redo,
     Box
 } from 'lucide-react'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 
 interface TiptapEditorProps {
     content: string
@@ -50,7 +50,7 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
         extensions: [
             StarterKit.configure({
                 heading: {
-                    levels: [1, 2, 3] as any,
+                    levels: [1, 2, 3],
                 },
                 codeBlock: false, // Disable default code block
             }),
@@ -203,21 +203,21 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
                     <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 1 }).run()}
+                        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                         active={editor.isActive('heading', { level: 1 })}
                         title="Heading 1"
                     >
                         <Heading1 size={18} />
                     </ToolbarButton>
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 2 }).run()}
+                        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                         active={editor.isActive('heading', { level: 2 })}
                         title="Heading 2"
                     >
                         <Heading2 size={18} />
                     </ToolbarButton>
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 3 }).run()}
+                        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
                         active={editor.isActive('heading', { level: 3 })}
                         title="Heading 3"
                     >
@@ -227,28 +227,28 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
                     <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleBold().run()}
+                        onClick={() => editor.chain().focus().toggleBold().run()}
                         active={editor.isActive('bold')}
                         title="Bold"
                     >
                         <Bold size={18} />
                     </ToolbarButton>
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleItalic().run()}
+                        onClick={() => editor.chain().focus().toggleItalic().run()}
                         active={editor.isActive('italic')}
                         title="Italic"
                     >
                         <Italic size={18} />
                     </ToolbarButton>
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleStrike().run()}
+                        onClick={() => editor.chain().focus().toggleStrike().run()}
                         active={editor.isActive('strike')}
                         title="Strikethrough"
                     >
                         <Strikethrough size={18} />
                     </ToolbarButton>
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleHighlight({ color: '#fef08a' }).run()}
+                        onClick={() => editor.chain().focus().toggleHighlight({ color: '#fef08a' }).run()}
                         active={editor.isActive('highlight')}
                         title="Highlight"
                     >
@@ -258,28 +258,28 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
                     <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleBulletList().run()}
+                        onClick={() => editor.chain().focus().toggleBulletList().run()}
                         active={editor.isActive('bulletList')}
                         title="Bullet List"
                     >
                         <List size={18} />
                     </ToolbarButton>
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleOrderedList().run()}
+                        onClick={() => editor.chain().focus().toggleOrderedList().run()}
                         active={editor.isActive('orderedList')}
                         title="Numbered List"
                     >
                         <ListOrdered size={18} />
                     </ToolbarButton>
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleBlockquote().run()}
+                        onClick={() => editor.chain().focus().toggleBlockquote().run()}
                         active={editor.isActive('blockquote')}
                         title="Blockquote"
                     >
                         <Quote size={18} />
                     </ToolbarButton>
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).toggleCodeBlock().run()}
+                        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                         active={editor.isActive('codeBlock')}
                         title="Code Block"
                     >
@@ -302,14 +302,14 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
                     <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).insertContent({ type: 'threeJsBlock' }).run()}
+                        onClick={() => editor.chain().focus().insertContent({ type: 'threeJsBlock' }).run()}
                         title="Insert 3D Model"
                     >
                         <Box size={18} />
                     </ToolbarButton>
 
                     <ToolbarButton
-                        onClick={() => (editor.chain().focus() as any).insertContent({ type: 'htmlBlock' }).run()}
+                        onClick={() => editor.chain().focus().insertContent({ type: 'htmlBlock' }).run()}
                         title="Insert HTML Widget"
                     >
                         <Code size={18} />
@@ -324,38 +324,38 @@ export function TiptapEditor({ content, onChange, placeholder = "Type '/' for co
                     className="flex items-center gap-1 bg-gray-900 dark:bg-gray-800 text-white rounded-lg shadow-xl px-2 py-1 border border-gray-700"
                 >
                     <BubbleButton
-                        onClick={() => (editor.chain().focus() as any).toggleBold().run()}
+                        onClick={() => editor.chain().focus().toggleBold().run()}
                         active={editor.isActive('bold')}
                     >
                         <Bold size={16} />
                     </BubbleButton>
                     <BubbleButton
-                        onClick={() => (editor.chain().focus() as any).toggleItalic().run()}
+                        onClick={() => editor.chain().focus().toggleItalic().run()}
                         active={editor.isActive('italic')}
                     >
                         <Italic size={16} />
                     </BubbleButton>
                     <BubbleButton
-                        onClick={() => (editor.chain().focus() as any).toggleStrike().run()}
+                        onClick={() => editor.chain().focus().toggleStrike().run()}
                         active={editor.isActive('strike')}
                     >
                         <Strikethrough size={16} />
                     </BubbleButton>
                     <BubbleButton
-                        onClick={() => (editor.chain().focus() as any).toggleHighlight({ color: '#fef08a' }).run()}
+                        onClick={() => editor.chain().focus().toggleHighlight({ color: '#fef08a' }).run()}
                         active={editor.isActive('highlight')}
                     >
                         <Highlighter size={16} />
                     </BubbleButton>
                     <div className="w-px h-4 bg-gray-600 mx-1" />
                     <BubbleButton
-                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 1 }).run()}
+                        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                         active={editor.isActive('heading', { level: 1 })}
                     >
                         <Heading1 size={16} />
                     </BubbleButton>
                     <BubbleButton
-                        onClick={() => (editor.chain().focus() as any).toggleHeading({ level: 2 }).run()}
+                        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                         active={editor.isActive('heading', { level: 2 })}
                     >
                         <Heading2 size={16} />

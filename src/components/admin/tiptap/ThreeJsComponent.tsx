@@ -1,10 +1,7 @@
 "use client"
 
-import React, { useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Box, OrbitControls, Environment, ContactShadows } from '@react-three/drei'
+import React, { useState } from 'react'
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react'
-import * as THREE from 'three'
 
 import { ThreeJsScene } from '../../content/ThreeJsScene'
 

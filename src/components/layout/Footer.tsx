@@ -49,7 +49,7 @@ export function Footer({
 
                 {/* Copyright */}
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-                    Copyright ©{new Date().getFullYear()} All rights reserved
+                    &copy; {new Date().getFullYear()} {ownerName}. All rights reserved.
                 </p>
             </div>
         </footer>

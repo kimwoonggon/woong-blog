@@ -14,7 +14,7 @@ interface AIFixDialogProps {
     onApply: (fixedContent: string) => void
     apiEndpoint?: string
     title?: string
-    extraBodyParams?: Record<string, any>
+    extraBodyParams?: Record<string, unknown>
 }
 
 export function AIFixDialog({
@@ -81,8 +81,9 @@ export function AIFixDialog({
             }
 
             setFixedContent(data.fixedHtml)
-        } catch (error: any) {
-            toast.error(error.message)
+        } catch (error: unknown) {
+            const err = error as Error
+            toast.error(err.message)
         } finally {
             setLoading(false)
         }

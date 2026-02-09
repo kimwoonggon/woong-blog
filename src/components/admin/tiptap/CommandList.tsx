@@ -19,9 +19,33 @@ import {
     ImageIcon,
 } from 'lucide-react'
 
-export const CommandList = forwardRef((props: any, ref) => {
+interface CommandItem {
+    title: string;
+    icon: string;
+    description?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+}
+
+interface CommandListProps {
+    items: CommandItem[];
+    command: (item: CommandItem) => void;
+}
+
+export interface CommandListRef {
+    onKeyDown: (props: { event: KeyboardEvent }) => boolean
+}
+
+export const CommandList = forwardRef<CommandListRef, CommandListProps>((props, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0)
+    const [prevItems, setPrevItems] = useState(props.items)
     const containerRef = React.useRef<HTMLDivElement>(null)
+
+    // Reset selected index when items change
+    if (props.items !== prevItems) {
+        setPrevItems(props.items)
+        setSelectedIndex(0)
+    }
 
     const selectItem = (index: number) => {
         const item = props.items[index]
@@ -41,8 +65,6 @@ export const CommandList = forwardRef((props: any, ref) => {
     const enterHandler = () => {
         selectItem(selectedIndex)
     }
-
-    useEffect(() => setSelectedIndex(0), [props.items])
 
     useEffect(() => {
         if (containerRef.current) {
@@ -93,7 +115,7 @@ export const CommandList = forwardRef((props: any, ref) => {
             </div>
             <div ref={containerRef} className="max-h-64 overflow-y-auto p-1">
                 {props.items.length ? (
-                    props.items.map((item: any, index: number) => (
+                    props.items.map((item: CommandItem, index: number) => (
                         <button
                             key={index}
                             onClick={() => selectItem(index)}
