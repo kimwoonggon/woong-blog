@@ -280,8 +280,10 @@
       </header>
       <list>
         Desktop:
-        - Vertical list, gap 18px
-        - Work row: thumbnail 240x180, content area min 520px
+        - Masonry Grid: Variable aspect ratios, 2 or 3 columns.
+        - Interaction: Hovering a card dims others (Focus effect).
+        - Motion: Cards fade up + scale in on scroll.
+        - Work row: thumbnail, content area min 520px
         - Metadata badge: Show period/duration and full published date
         Mobile:
         - Thumbnail full width (stacked), content below (gap 10px)
@@ -517,9 +519,9 @@
         - Deep Ink: #2F2941 - headings, badges background, primary text
       </primary_colors>
       <background_colors>
-        - Page Background: #FFFFFF - main background
-        - Subtle Blue-Gray: #EBF4F7 - soft section background (optional)
-        - Surface: #FFFFFF - card surfaces
+        - Page Background: #FAFAFA - main background (Vapor White)
+        - Subtle Gray: #F4F4F5 - soft section background (Zinc-100)
+        - Surface: #FFFFFF - card surfaces (Pure White)
       </background_colors>
       <text_colors>
         - Text Primary: #2F2941
@@ -548,7 +550,8 @@
 
     <typography>
       <font_families>
-        - Primary: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"
+        - Headings: "Archivo", system-ui, sans-serif
+        - Body: "Space Grotesk", system-ui, sans-serif
       </font_families>
       <font_sizes>
         - H1: 44px (700)
@@ -609,7 +612,8 @@
         - Inline editor focus: 120ms ease-out highlight
       </micro_interactions>
       <page_transitions>
-        - Use default Next.js transitions; optional fade-in 180ms for major sections
+        - Soft fade-out/slide-up when navigating between major sections.
+        - Staggered Entrance (Hero): Image (0ms) -> Headline (+100ms) -> Subtext (+200ms).
       </page_transitions>
       <drag_and_drop>
         - Drag preview shadow: 0px 20px 40px rgba(47,41,65,0.18)
@@ -617,6 +621,7 @@
       </drag_and_drop>
       <loading_states>
         - Skeleton shimmer: 1200ms linear infinite
+        - Masonry loading: fade up + scale in
       </loading_states>
     </animations>
 

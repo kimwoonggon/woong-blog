@@ -54,14 +54,20 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="flex flex-col-reverse items-center justify-between gap-8 md:flex-row md:items-start md:gap-12">
         <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
-          <h1 className="mb-4 text-4xl font-bold tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-gray-50">
+          <h1
+            className="mb-4 text-4xl font-heading font-bold tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-gray-50 opacity-0 animate-fade-in-up"
+            style={{ animationDelay: '100ms' }}
+          >
             {headline}
           </h1>
-          <p className="mb-8 max-w-[600px] text-lg text-gray-600 dark:text-gray-400">
+          <p
+            className="mb-8 max-w-[600px] text-lg text-gray-600 dark:text-gray-400 opacity-0 animate-fade-in-up"
+            style={{ animationDelay: '200ms' }}
+          >
             {introText}
           </p>
         </div>
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 opacity-0 animate-fade-in-up" style={{ animationDelay: '0ms' }}>
           <div className="h-60 w-60 overflow-hidden rounded-full bg-gray-200 shadow-xl dark:bg-gray-800">
             {profileImageUrl ? (
               <img
