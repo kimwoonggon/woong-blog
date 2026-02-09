@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Facebook, Instagram, Twitter, Linkedin, Github } from 'lucide-react'
 
 interface FooterProps {
+    ownerName?: string
     facebookUrl?: string
     instagramUrl?: string
     twitterUrl?: string
@@ -10,6 +11,7 @@ interface FooterProps {
 }
 
 export function Footer({
+    ownerName = 'John Doe',
     facebookUrl = '',
     instagramUrl = '',
     twitterUrl = '',
@@ -47,7 +49,7 @@ export function Footer({
 
                 {/* Copyright */}
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-                    Copyright ©{new Date().getFullYear()} All rights reserved
+                    &copy; {new Date().getFullYear()} {ownerName}. All rights reserved.
                 </p>
             </div>
         </footer>
