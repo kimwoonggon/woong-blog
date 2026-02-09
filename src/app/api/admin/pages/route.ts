@@ -25,7 +25,7 @@ export async function PUT(request: Request) {
     const body = await request.json()
     const { id, content, title } = body
 
-    const updateData: { content?: any; title?: string } = {}
+    const updateData: { content?: unknown; title?: string } = {}
     if (content !== undefined) updateData.content = content
     if (title !== undefined) updateData.title = title
 

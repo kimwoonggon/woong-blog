@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { Facebook, Instagram, Twitter, Linkedin, Github } from 'lucide-react'
 
 interface FooterProps {
-    ownerName?: string
     facebookUrl?: string
     instagramUrl?: string
     twitterUrl?: string
@@ -11,7 +10,6 @@ interface FooterProps {
 }
 
 export function Footer({
-    ownerName = 'John Doe',
     facebookUrl = '',
     instagramUrl = '',
     twitterUrl = '',

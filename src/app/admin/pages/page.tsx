@@ -12,7 +12,7 @@ interface PageData {
     id: string
     title: string
     slug: string
-    content: any
+    content: unknown
 }
 
 interface HomeContent {
@@ -107,7 +107,6 @@ export default async function AdminPagesPage() {
 
                 {/* Resume Management */}
                 <ResumeEditor
-                    initialResumeId={siteSettings?.resume_asset_id || null}
                     resumeAsset={resumeAsset}
                 />
             </div>

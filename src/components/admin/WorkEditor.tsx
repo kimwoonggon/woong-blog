@@ -27,7 +27,7 @@ interface Work {
     thumbnail_url?: string
     icon_url?: string
     period?: string
-    all_properties?: any
+    all_properties?: Record<string, unknown>
 }
 
 interface WorkEditorProps {
@@ -71,7 +71,7 @@ export function WorkEditor({ initialWork }: WorkEditorProps) {
         const rawProps = formData.get('all_properties') as string
         try {
             if (rawProps) JSON.parse(rawProps)
-        } catch (e) {
+        } catch {
             alert('Invalid JSON in Flexible Metadata field')
             return
         }

@@ -1,6 +1,6 @@
 
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 
@@ -10,6 +10,18 @@ interface HomeContent {
   headline?: string
   introText?: string
   profileImageUrl?: string
+}
+
+interface FeaturedWork {
+  id: string
+  title: string
+  slug: string
+  published_at: string | null
+  category: string
+  period?: string
+  excerpt?: string
+  thumbnail?: { bucket: string; path: string }
+  content?: { html: string }
 }
 
 export default async function HomePage() {
@@ -68,12 +80,14 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="flex-shrink-0 opacity-0 animate-fade-in-up" style={{ animationDelay: '0ms' }}>
-          <div className="h-60 w-60 overflow-hidden rounded-full bg-gray-200 shadow-xl dark:bg-gray-800">
+          <div className="relative h-60 w-60 overflow-hidden rounded-full bg-gray-200 shadow-xl dark:bg-gray-800">
             {profileImageUrl ? (
-              <img
+              <Image
                 src={profileImageUrl}
                 alt="Profile"
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                unoptimized
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-gray-400">
@@ -148,7 +162,7 @@ export default async function HomePage() {
         </div>
         <div className="flex flex-col gap-6">
           {featuredWorks && featuredWorks.length > 0 ? (
-            featuredWorks.map((work: any) => {
+            featuredWorks.map((work: FeaturedWork) => {
               // Resolve thumbnail URL or fallback
               let thumbnailUrl = null
               if (work.thumbnail) {
@@ -175,10 +189,12 @@ export default async function HomePage() {
                     className="h-48 w-full flex-shrink-0 overflow-hidden rounded-md bg-gray-200 md:w-64 dark:bg-gray-800 relative block group border"
                   >
                     {thumbnailUrl ? (
-                      <img
+                      <Image
                         src={thumbnailUrl}
                         alt={work.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        unoptimized
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-gray-400 font-medium">
